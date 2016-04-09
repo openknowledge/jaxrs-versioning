@@ -16,6 +16,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * @author Arne Limburg - open knowledge GmbH
+ * @author Philipp Geers - open knowledge GmbH
+ */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AddressV1 {
