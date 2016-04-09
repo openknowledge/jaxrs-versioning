@@ -12,10 +12,38 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
 public class VersionContext {
+
+  private List<Object> parents;
   
+  public VersionContext(Object parent) {
+    parents = new ArrayList<>();
+    parents.add(parent);
+  }
+
+  private VersionContext(List<Object> stack) {
+    this.parents = stack.subList(0, stack.size());
+  }
+
+  public Object getParent() {
+    return parents.get(parents.size() - 1);
+  }
+
+  VersionContext getParentContext() {
+    return new VersionContext(parents.subList(0, parents.size() - 1));
+  }
+
+  VersionContext getChildContext(Object base) {
+    List<Object> newParents = parents;
+    newParents.add(base);
+    parents = newParents.subList(0, newParents.size() - 1);
+    return new VersionContext(newParents);
+  }
 }

@@ -37,46 +37,49 @@ public class CompatibilityMapper {
       }
       Object value = versionProperty.get(object);
       if (value == null) {
-        value = getPrevious(versionType, movedFrom, object);
+        value = getPrevious(versionType, movedFrom, new VersionContext(object));
         if (value != null) {
           versionProperty.set(object, value);
         }
       } else {
-        setValue(versionType, movedFrom, object, value);
+        setValue(versionType, movedFrom, value, new VersionContext(object));
       }
 
     }
 
   }
 
-  private void setValue(VersionType versionType, MovedFrom movedFrom, Object base, Object value) {
-    VersionPropertyValue propertyValue = getPropertyValue(versionType, base, movedFrom);
+  private void setValue(VersionType versionType, MovedFrom movedFrom, Object value, VersionContext context) {
+    VersionPropertyValue propertyValue = getPropertyValue(versionType, movedFrom, context);
     propertyValue.set(value);
     movedFrom = propertyValue.getAnnotation(MovedFrom.class);
     if (movedFrom != null) {
-      setValue(versionType, movedFrom, base, value);
+      setValue(versionType, movedFrom, value, context);
     }
   }
 
-  private VersionPropertyValue getPropertyValue(VersionType versionType, Object base, MovedFrom movedFrom) {
-    return getPropertyValue(versionType, base, movedFrom.value().split("/"), 0);
+  private VersionPropertyValue getPropertyValue(VersionType versionType, MovedFrom movedFrom, VersionContext context) {
+    return getPropertyValue(versionType, movedFrom.value().split("/"), 0, context);
   }
 
-  private VersionPropertyValue getPropertyValue(VersionType versionType, Object base, String[] pathElements, int index) {
+  private VersionPropertyValue getPropertyValue(VersionType versionType, String[] pathElements, int index, VersionContext context) {
+    if (pathElements[index].equals("..")) {
+      return getPropertyValue(versionType, pathElements, index + 1, context.getParentContext());
+    }
     VersionProperty property = versionType.getProperty(pathElements[index]);
     if (property == null) {
       throw new IllegalArgumentException("@MoveFrom contains unknown property " + pathElements[index]);
     }
     if (pathElements.length == index + 1) {
-      return new VersionPropertyValue(property, base);
+      return new VersionPropertyValue(property, context.getParent());
     }
-    Object value = property.get(base);
-    return getPropertyValue(versionTypeFactory.get(property.getType()), value, pathElements, index + 1);
+    Object value = property.get(context.getParent());
+    return getPropertyValue(versionTypeFactory.get(property.getType()), pathElements, index + 1, context.getChildContext(value));
   }
 
 
-  private Object getPrevious(VersionType versionType, MovedFrom movedFrom, Object object) {
-    VersionPropertyValue propertyValue = getPropertyValue(versionType, object, movedFrom);
+  private Object getPrevious(VersionType versionType, MovedFrom movedFrom, VersionContext context) {
+    VersionPropertyValue propertyValue = getPropertyValue(versionType, movedFrom, context);
     Object value = propertyValue.get();
     if (value != null) {
       return value;
@@ -86,6 +89,6 @@ public class CompatibilityMapper {
       //root
       return null;
     }
-    return getPrevious(versionType, movedFrom, object);
+    return getPrevious(versionType, movedFrom, context);
   }
 }
