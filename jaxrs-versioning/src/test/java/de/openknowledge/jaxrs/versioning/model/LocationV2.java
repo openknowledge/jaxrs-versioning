@@ -1,4 +1,4 @@
-package java.de.openknowledge.jaxrs.versioning.model;
+package de.openknowledge.jaxrs.versioning.model;
 
 /**
  * @author Philipp Geers - open knowledge GmbH
