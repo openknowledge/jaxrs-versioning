@@ -22,9 +22,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StreetV1 {
 
-  private String name;
+  protected String name;
 
-  private String number;
+  protected String number;
+
+//  @MovedFrom("name")
+  private String streetName;
+
+//  @MovedFrom("number")
+  private String streetNumber;
+
+  protected StreetV1() {
+  }
 
   public StreetV1(String name, String number) {
     this.name = name;
@@ -37,5 +46,13 @@ public class StreetV1 {
 
   public String getNumber() {
     return number;
+  }
+
+  public String getStreetName() {
+    return streetName;
+  }
+
+  public String getStreetNumber() {
+    return streetNumber;
   }
 }

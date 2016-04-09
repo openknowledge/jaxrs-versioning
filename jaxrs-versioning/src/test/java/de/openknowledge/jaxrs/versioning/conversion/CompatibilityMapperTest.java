@@ -14,19 +14,34 @@ package de.openknowledge.jaxrs.versioning.conversion;
 
 import de.openknowledge.jaxrs.versioning.model.StreetV1;
 import de.openknowledge.jaxrs.versioning.model.AddressV2;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
+@Ignore
 public class CompatibilityMapperTest {
 
-    @Test
-    public void setContentSuccessful() {
+    private CompatibilityMapper mapper = new CompatibilityMapper();
 
-        StreetV1 streetV1;
-        AddressV2 addressV2;
+    @Test
+    public void mapV10To11() {
+        StreetV1 streetV1 = new StreetV1() {{
+            name = "Samplestreet";
+            number = "1";
+        }};
+        mapper.map(streetV1);
+        assertThat(streetV1.getStreetName(), is("Samplestreet"));
+        assertThat(streetV1.getStreetNumber(), is("1"));
+    }
+
+    @Test
+    public void mapV11To10() {
 
     }
 

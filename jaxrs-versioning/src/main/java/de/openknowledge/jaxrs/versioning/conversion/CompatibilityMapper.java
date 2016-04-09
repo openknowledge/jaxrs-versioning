@@ -17,8 +17,6 @@ package de.openknowledge.jaxrs.versioning.conversion;
  * @author Philipp Geers - open knowledge GmbH
  */
 public class CompatibilityMapper {
-
-
-    // adresse -> strasse, hausnr, stadt, zip und vice versa
-
+    public void map(Object object) {
+    }
 }
