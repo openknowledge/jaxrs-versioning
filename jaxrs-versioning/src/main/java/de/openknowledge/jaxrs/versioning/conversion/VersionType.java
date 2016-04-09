@@ -1,10 +1,13 @@
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import java.util.Collection;
+
 /**
  * @author Philipp Geers - open knowledge GmbH
+ * @author Arne Limburg - open knowledge GmbH
  */
 public interface VersionType {
   
-  Object get(Object base, String name);
-  void set(Object base, String name, Object value);
+  Collection<VersionProperty> getProperties();
+  VersionProperty getProperty(String name);
 }
