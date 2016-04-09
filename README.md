@@ -13,22 +13,22 @@ With this framework you are able to replace most of the boilerplate code with so
 
 Example:
 --------------------------------
-   "address": {
+    "address": {
        "street": {
            "name": "Samplestreet",
            "number": "1"
        },
        "city": "12345 Samplecity"
-   }
+    }
 When you want to rename "name" of "street", you have to copy it to be backward-compatible like
-   "address": {
+    "address": {
        "street": {
            "name": "Samplestreet",
            "streetName": "Samplestreet",
            "number": "1"
        },
        "city": "12345 Samplecity"
-   }
+    }
 Of course your server has to deal with both kind of data, one that contains a "name"
 (from older clients) and one that contains "streetName" (from newer clients).
 When answering on such requests, both fields have to be filled.
@@ -41,4 +41,27 @@ Simply annotate the "streetName" field in Java with @MovedFrom
         @MovedFrom("name")
         private String streetName;
         private String number;
+    }
+How to implement breaking changes?
+==================================
+The framework supports breaking changes. Simply provide a class for every version
+and the framework will convert parameters and return values of your REST resources
+accordingly. You only have to specify the previous version via annotation.
+
+    @SupportedVersion(version = "v2", previous = StreetV1.class)
+    public class Street {
+        ...
+    }
+
+
+How to integrate the framework
+==============================
+Simply put the jar in your classpath and specify a {version} path param in your REST resource.
+    @Path("addresses/{version}")
+    public class AddressResource {
+    
+        @Path("{id}")
+        public Address getAddress(@PathParam("id") int id) {
+            ...
+        }
     }
