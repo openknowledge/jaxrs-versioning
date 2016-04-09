@@ -1,7 +1,7 @@
 package de.openknowledge.jaxrs.versioning.conversion;
 
 import de.openknowledge.jaxrs.versioning.model.StreetV1;
-import de.openknowledge.jaxrs.versioning.model.StreetV2;
+import de.openknowledge.jaxrs.versioning.model.AddressV2;
 import org.junit.Test;
 
 /**
@@ -13,7 +13,7 @@ public class CompatibilityMapperTest {
     public void setContentSuccessful() {
 
         StreetV1 streetV1;
-        StreetV2 streetV2;
+        AddressV2 addressV2;
 
     }
 
