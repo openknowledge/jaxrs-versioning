@@ -4,6 +4,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
@@ -37,6 +40,7 @@ public class AddressResourceTest {
         .addClasses(SampleApplication.class, AddressResource.class)
         .addPackage(AddressV1.class.getPackage())
         .addAsLibraries(pom.resolve("org.apache.commons:commons-lang3").withTransitivity().asFile())
+        .addAsLibraries(pom.resolve("org.json:json").withTransitivity().asFile())
         .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)
           .addDefaultNamespaces()
           .exportAsString()));
@@ -44,11 +48,34 @@ public class AddressResourceTest {
 
   @Test
   public void getAddress(@ArquillianResource URL url) throws IOException {
-    String test = IOUtils.toString(new URL(url, "v1/addresses/42").openStream());
-    JSONObject address = new JSONObject(test);
-    JSONObject street = (JSONObject)address.get("street");
-    assertThat(street.get("name").toString(), is("Samplestreet"));
-    assertThat(street.get("number").toString(), is("1"));
-    assertThat(address.get("city").toString(), is("12345 Samplecity"));
+    JSONObject address = new JSONObject(IOUtils.toString(new URL(url, "v1/addresses/42").openStream()));
+    JSONObject street = address.getJSONObject("street");
+    assertThat(street.getString("name"), is("Samplestreet"));
+    assertThat(street.getString("number"), is("1"));
+    assertThat(address.getString("city"), is("12345 Samplecity"));
+  }
+
+  @Test
+  public void postAddress(@ArquillianResource URL url) throws IOException {
+    InputStream result = post(new URL(url, "v1/addresses/42"), "address_v1_0.json");
+    
+    JSONObject address = new JSONObject(IOUtils.toString(result));
+    JSONObject street = address.getJSONObject("street");
+    assertThat(street.getString("name"), is("Samplestreet"));
+    assertThat(street.getString("number"), is("1"));
+    assertThat(address.getString("city"), is("12345 Samplecity"));
+  }
+
+  private InputStream post(URL url, String resource) throws IOException {
+    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+    connection.setRequestMethod("POST");
+    connection.setRequestProperty("Content-Type", "application/json");
+    connection.setDoOutput(true);
+    PrintWriter writer = new PrintWriter(connection.getOutputStream());
+    for (String line: IOUtils.readLines(AddressV1.class.getResourceAsStream(resource))) {
+      writer.write(line);
+    }
+    writer.close();
+    return connection.getInputStream();
   }
 }

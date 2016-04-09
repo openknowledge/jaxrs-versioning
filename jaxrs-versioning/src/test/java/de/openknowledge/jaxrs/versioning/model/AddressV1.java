@@ -28,4 +28,8 @@ public class AddressV1 {
     this.street = street;
     this.city = city;
   }
+
+  public StreetV1 getStreet() {
+    return street;
+  }
 }
