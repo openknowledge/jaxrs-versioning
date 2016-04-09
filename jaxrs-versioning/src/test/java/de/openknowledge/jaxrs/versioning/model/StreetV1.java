@@ -12,6 +12,8 @@
  */
 package de.openknowledge.jaxrs.versioning.model;
 
+import de.openknowledge.jaxrs.versioning.MovedFrom;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -26,10 +28,10 @@ public class StreetV1 {
 
   protected String number;
 
-//  @MovedFrom("name")
+  @MovedFrom("name")
   private String streetName;
 
-//  @MovedFrom("number")
+  @MovedFrom("number")
   private String streetNumber;
 
   protected StreetV1() {
