@@ -30,6 +30,10 @@ public class CompatibilityMapper {
   }
 
   public void map(Object object) {
+    map(object, new VersionContext(object));
+  }
+
+  private void map(Object object, VersionContext context) {
     VersionType versionType = versionTypeFactory.get(object.getClass());
 
     for (VersionProperty versionProperty : versionType.getProperties()) {
@@ -43,11 +47,11 @@ public class CompatibilityMapper {
       Object value = versionProperty.get(object);
       if (value == null) {
         if (movedFrom != null) {
-          value = getPrevious(versionType, movedFrom, new VersionContext(object));
+          value = getPrevious(versionType, movedFrom, context);
         } else if (added != null ) {
-          value = getValue(versionProperty, added.defaultValue(), added.provider(), new VersionContext(object));
+          value = getValue(versionProperty, added.defaultValue(), added.provider(), context);
         } else {// if (removed != null)
-          value = getValue(versionProperty, removed.defaultValue(), removed.provider(), new VersionContext(object));
+          value = getValue(versionProperty, removed.defaultValue(), removed.provider(), context);
         }
         // TODO check if more than one annotation is set
         if (value != null) {
@@ -72,7 +76,9 @@ public class CompatibilityMapper {
         throw new IllegalStateException(e);
       }
     } else {
-      return versionTypeFactory.get(property.getType()).newInstance();
+      Object value = versionTypeFactory.get(property.getType()).newInstance();
+      map(value, context.getChildContext(value));
+      return value;
     }
   }
 
@@ -91,7 +97,8 @@ public class CompatibilityMapper {
 
   private VersionPropertyValue getPropertyValue(VersionType versionType, String[] pathElements, int index, VersionContext context) {
     if (pathElements[index].equals("..")) {
-      return getPropertyValue(versionType, pathElements, index + 1, context.getParentContext());
+      context = context.getParentContext();
+      return getPropertyValue(versionTypeFactory.get(context.getParent().getClass()), pathElements, index + 1, context);
     }
     VersionProperty property = versionType.getProperty(pathElements[index]);
     if (property == null) {
