@@ -12,7 +12,10 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -24,9 +27,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FieldVersionType implements VersionType {
 
+  private Class<?> type;
   private Map<String, VersionProperty> fields;
   
   public FieldVersionType(Class<?> type, VersionTypeFactory factory) {
+    this.type = type;
     ConcurrentHashMap<String, VersionProperty> fields = new ConcurrentHashMap<String, VersionProperty>();
     if (type.getSuperclass() != Object.class) {
       FieldVersionType parent = (FieldVersionType)factory.get(type.getSuperclass());
@@ -51,5 +56,21 @@ public class FieldVersionType implements VersionType {
       throw new IllegalArgumentException("@MovedFrom contains unknown property: " + name );
     }
     return versionProperty;
+  }
+
+  @Override
+  public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
+    return type.getAnnotation(annotationType);
+  }
+
+  @Override
+  public Object newInstance() {
+    try {
+      Constructor<?> constructor = type.getDeclaredConstructor();
+      constructor.setAccessible(true);
+      return constructor.newInstance();
+    } catch (ReflectiveOperationException e) {
+      throw new IllegalStateException(e);
+    }
   }
 }

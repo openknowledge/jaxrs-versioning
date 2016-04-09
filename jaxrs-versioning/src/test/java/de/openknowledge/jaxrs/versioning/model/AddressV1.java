@@ -14,13 +14,18 @@ package de.openknowledge.jaxrs.versioning.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+
+import de.openknowledge.jaxrs.versioning.SupportedVersion;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
-@XmlRootElement
+@SupportedVersion(version = "v1")
+@JsonAutoDetect(creatorVisibility = Visibility.ANY, getterVisibility = Visibility.NONE, fieldVisibility = Visibility.ANY)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AddressV1 {
 
@@ -33,6 +38,9 @@ public class AddressV1 {
   private String addressLine2;
   
   private LocationV1 location;
+
+  protected AddressV1() {
+  }
 
   public AddressV1(StreetV1 street, String city) {
     this.street = street;
@@ -47,5 +55,17 @@ public class AddressV1 {
 
   public StreetV1 getStreet() {
     return street;
+  }
+
+  public String getAddressLine1() {
+    return addressLine1;
+  }
+
+  public String getAddressLine2() {
+    return addressLine2;
+  }
+
+  public LocationV1 getLocation() {
+    return location;
   }
 }

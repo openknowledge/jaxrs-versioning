@@ -15,11 +15,15 @@ package de.openknowledge.jaxrs.versioning.conversion;
 import java.io.IOException;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.ReaderInterceptor;
 import javax.ws.rs.ext.ReaderInterceptorContext;
 import javax.ws.rs.ext.WriterInterceptor;
 import javax.ws.rs.ext.WriterInterceptorContext;
+
+import de.openknowledge.jaxrs.versioning.SupportedVersion;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
@@ -28,20 +32,55 @@ import javax.ws.rs.ext.WriterInterceptorContext;
 @Provider
 public class MessageBodyConverter implements ReaderInterceptor, WriterInterceptor {
 
+  private VersionTypeFactory factory = new VersionTypeFactory();
   private CompatibilityMapper mapper = new CompatibilityMapper();
+  private InterVersionConverter converter = new InterVersionConverter(factory, mapper);
 
+  @Context
+  private UriInfo uriInfo;
+  
   @Override
-  public void aroundWriteTo(WriterInterceptorContext context)
-      throws IOException, WebApplicationException {
-    context.proceed();
-    mapper.map(context.getEntity());
+  public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {
+    if (context.getType() == String.class) {
+      return context.proceed();
+    }
+    String sourceVersion = getVersion();
+    Class<?> sourceType = getSourceType(context.getType(), sourceVersion);
+    context.setType(sourceType);
+    context.setGenericType(sourceType);
+    Object sourceObject = context.proceed();
+    mapper.map(sourceObject);
+    return converter.convertToHigherVersion(context.getType(), sourceObject, sourceVersion);
   }
 
   @Override
-  public Object aroundReadFrom(ReaderInterceptorContext context)
-      throws IOException, WebApplicationException {
-    Object body = context.proceed();
-    mapper.map(body);
-    return body;
+  public void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException {
+    String targetVersion = getVersion();
+    Object source = context.getEntity();
+    if (source instanceof String) {
+      // may be an error text
+      context.proceed();
+      return;
+    }
+    mapper.map(source);
+    Object target = converter.convertToLowerVersion(targetVersion, source);
+    context.setEntity(target);
+    context.proceed();
+  }
+
+  private String getVersion() {
+    return uriInfo.getPathParameters().get("version").iterator().next();
+  }
+
+  private Class<?> getSourceType(Class<?> type, String version) {
+    SupportedVersion supportedVersion = factory.get(type).getAnnotation(SupportedVersion.class);
+    if (supportedVersion == null) {
+      throw new IllegalArgumentException("unsupported version " + version + " for type " + type);
+    }
+    if (supportedVersion.version().equals(version)) {
+      return type;
+    } else {
+      return getSourceType(supportedVersion.previous(), version);
+    }
   }
 }

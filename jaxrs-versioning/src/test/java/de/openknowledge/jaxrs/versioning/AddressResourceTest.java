@@ -57,6 +57,7 @@ public class AddressResourceTest {
     return ShrinkWrap.create(WebArchive.class)
         .addClasses(SampleApplication.class, AddressResource.class)
         .addPackage(AddressV1.class.getPackage())
+        .addPackage(MovedFrom.class.getPackage())
         .addPackage(MessageBodyConverter.class.getPackage())
         .addAsLibraries(pom.resolve("org.apache.commons:commons-lang3").withTransitivity().asFile())
         .addAsLibraries(pom.resolve("org.json:json").withTransitivity().asFile())

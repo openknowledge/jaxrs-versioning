@@ -20,8 +20,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.json.JSONObject;
-
 import de.openknowledge.jaxrs.versioning.model.AddressV1;
 import de.openknowledge.jaxrs.versioning.model.LocationV1;
 
@@ -48,23 +46,19 @@ public class AddressResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  public AddressV1 createAddress(String addressJson) {
-    JSONObject address = new JSONObject(addressJson);
-    if (!address.getString("addressLine1").equals("Samplestreet 1")) {
+  public AddressV1 createAddress(AddressV1 address) {
+    if (!address.getAddressLine1().equals("Samplestreet 1")) {
       throw new IllegalArgumentException("wrong address line 1");
     }
-    if (!address.getString("addressLine2").equals("")) {
+    if (!address.getAddressLine2().equals("")) {
       throw new IllegalArgumentException("wrong address line 2");
     }
-    if (!address.getJSONObject("location").getString("zipCode").equals("12345")) {
+    if (!address.getLocation().getZipCode().equals("12345")) {
       throw new IllegalArgumentException("wrong zip code");
     }
-    return new AddressV1(
-        address.getString("addressLine1"),
-        address.getString("addressLine2"),
-        new LocationV1(
-            address.getJSONObject("location").getString("zipCode"),
-            address.getJSONObject("location").getString("cityName")
-        ));
+    if (!address.getLocation().getCityName().equals("Samplecity")) {
+      throw new IllegalArgumentException("wrong zip code");
+    }
+    return address;
   }
 }

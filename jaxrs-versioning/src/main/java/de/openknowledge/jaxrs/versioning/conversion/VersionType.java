@@ -12,6 +12,7 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 /**
@@ -22,4 +23,6 @@ public interface VersionType {
   
   Collection<VersionProperty> getProperties();
   VersionProperty getProperty(String name);
+  <A extends Annotation> A getAnnotation(Class<A> class1);
+  Object newInstance();
 }

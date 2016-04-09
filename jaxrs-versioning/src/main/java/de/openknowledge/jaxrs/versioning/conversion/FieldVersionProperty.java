@@ -23,10 +23,17 @@ import java.lang.reflect.Field;
  */
 public class FieldVersionProperty implements VersionProperty {
 
+  private String name;
   private Field field;
 
   public FieldVersionProperty(Field field) {
     this.field = notNull(field);
+    this.name = field.getName();
+  }
+
+  @Override
+  public String getName() {
+    return name;
   }
 
   @Override

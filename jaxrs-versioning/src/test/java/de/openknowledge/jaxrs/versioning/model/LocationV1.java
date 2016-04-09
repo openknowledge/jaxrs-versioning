@@ -22,6 +22,9 @@ public class LocationV1 {
 
     private String cityName;
 
+    protected LocationV1() {
+    }
+
     public LocationV1(String zipCode, String cityName) {
         this.zipCode = zipCode;
         this.cityName = cityName;
