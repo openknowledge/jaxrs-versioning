@@ -29,7 +29,7 @@ import de.openknowledge.jaxrs.versioning.model.LocationV2;
 public class InterVersionConverterTest {
 
   private VersionTypeFactory factory = new VersionTypeFactory();
-  private CompatibilityMapper mapper = new CompatibilityMapper();
+  private CompatibilityMapper mapper = new CompatibilityMapper(factory);
   private InterVersionConverter converter = new InterVersionConverter(factory, mapper);
 
   @Test

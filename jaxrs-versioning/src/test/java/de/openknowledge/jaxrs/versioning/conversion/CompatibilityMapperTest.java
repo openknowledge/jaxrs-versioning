@@ -27,7 +27,8 @@ import de.openknowledge.jaxrs.versioning.model.StreetV1;
 @Ignore
 public class CompatibilityMapperTest {
 
-    private CompatibilityMapper mapper = new CompatibilityMapper();
+    private VersionTypeFactory factory = new VersionTypeFactory();
+    private CompatibilityMapper mapper = new CompatibilityMapper(factory);
 
     @Test
     public void mapV10To11() {
