@@ -34,12 +34,14 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
   public void aroundWriteTo(WriterInterceptorContext context)
       throws IOException, WebApplicationException {
     context.proceed();
-//    mapper.map(context.getEntity());
+    mapper.map(context.getEntity());
   }
 
   @Override
   public Object aroundReadFrom(ReaderInterceptorContext context)
       throws IOException, WebApplicationException {
-    return context.proceed();
+    Object body = context.proceed();
+    mapper.map(body);
+    return body;
   }
 }
