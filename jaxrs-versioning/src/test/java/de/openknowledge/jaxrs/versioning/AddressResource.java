@@ -20,8 +20,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import de.openknowledge.jaxrs.versioning.model.AddressV1;
-import de.openknowledge.jaxrs.versioning.model.LocationV1;
+import de.openknowledge.jaxrs.versioning.model.AddressV2;
+import de.openknowledge.jaxrs.versioning.model.LocationV2;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
@@ -33,11 +33,11 @@ public class AddressResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  public AddressV1 getAddress(@PathParam("id") int id) {
-    return new AddressV1(
+  public AddressV2 getAddress(@PathParam("id") int id) {
+    return new AddressV2(
         "Samplestreet 1",
         "",
-        new LocationV1(
+        new LocationV2(
             "12345",
             "Samplecity"));
   }
@@ -46,7 +46,7 @@ public class AddressResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  public AddressV1 createAddress(AddressV1 address) {
+  public AddressV2 createAddress(AddressV2 address) {
     if (!address.getAddressLine1().equals("Samplestreet 1")) {
       throw new IllegalArgumentException("wrong address line 1");
     }

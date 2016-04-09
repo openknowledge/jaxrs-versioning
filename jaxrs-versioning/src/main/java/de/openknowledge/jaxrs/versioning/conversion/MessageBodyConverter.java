@@ -50,7 +50,11 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
     context.setGenericType(sourceType);
     Object sourceObject = context.proceed();
     mapper.map(sourceObject);
-    return converter.convertToHigherVersion(context.getType(), sourceObject, sourceVersion);
+    Object target = converter.convertToHigherVersion(context.getType(), sourceObject, sourceVersion);
+    Class<?> targetType = target.getClass();
+    context.setType(targetType);
+    context.setGenericType(targetType);
+    return target;
   }
 
   @Override
