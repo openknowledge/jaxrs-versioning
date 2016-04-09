@@ -27,24 +27,27 @@ import de.openknowledge.jaxrs.versioning.model.StreetV1;
 @Ignore
 public class CompatibilityMapperTest {
 
-    private VersionTypeFactory factory = new VersionTypeFactory();
-    private CompatibilityMapper mapper = new CompatibilityMapper(factory);
+  private VersionTypeFactory factory = new VersionTypeFactory();
 
-    @Test
-    public void mapV10To11() {
-        StreetV1 streetV1 = new StreetV1() {{
-            name = "Samplestreet";
-            number = "1";
-        }};
-        mapper.map(streetV1);
-        assertThat(streetV1.getStreetName(), is("Samplestreet"));
-        assertThat(streetV1.getStreetNumber(), is("1"));
-    }
+  private CompatibilityMapper mapper = new CompatibilityMapper(factory);
 
-    @Test
-    public void mapV11To10() {
+  @Test
+  public void mapV10To11() {
+    StreetV1 streetV1 = new StreetV1() {
 
-    }
+      {
+        name = "Samplestreet";
+        number = "1";
+      }
+    };
+    mapper.map(streetV1);
+    assertThat(streetV1.getStreetName(), is("Samplestreet"));
+    assertThat(streetV1.getStreetNumber(), is("1"));
+  }
 
+  @Test
+  public void mapV11To10() {
+
+  }
 
 }
