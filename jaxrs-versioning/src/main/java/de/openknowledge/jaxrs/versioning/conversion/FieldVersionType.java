@@ -45,7 +45,11 @@ public class FieldVersionType implements VersionType {
   }
 
   @Override
-  public VersionProperty getProperty(String name) {
-    return fields.get(name);
+  public VersionProperty getProperty (String name) {
+    VersionProperty versionProperty = fields.get(name);
+    if(versionProperty == null) {
+      throw new IllegalArgumentException("@MovedFrom contains unknown property: " + name );
+    }
+    return versionProperty;
   }
 }

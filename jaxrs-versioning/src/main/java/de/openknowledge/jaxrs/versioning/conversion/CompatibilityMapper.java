@@ -12,15 +12,26 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import de.openknowledge.jaxrs.versioning.MovedFrom;
+
 /**
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
 public class CompatibilityMapper {
+
+    private VersionTypeFactory versionTypeFactory = new VersionTypeFactory();
     public void map(Object object) {
+        VersionType versionType = versionTypeFactory.get(object.getClass());
 
+        for (VersionProperty versionProperty : versionType.getProperties()) {
+            MovedFrom movedFrom = versionProperty.getAnnotation(MovedFrom.class);
+            if (movedFrom == null){
+                continue;
+            }
 
+            versionType.getProperty(movedFrom.value());
 
-
+        }
     }
 }
