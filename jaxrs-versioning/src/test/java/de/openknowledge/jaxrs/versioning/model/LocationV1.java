@@ -12,14 +12,18 @@
  */
 package de.openknowledge.jaxrs.versioning.model;
 
+import de.openknowledge.jaxrs.versioning.MovedFrom;
+
 /**
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
 public class LocationV1 {
 
+  @MovedFrom("../zipCode")
   private String zipCode;
 
+  @MovedFrom("../cityName")
   private String cityName;
 
   protected LocationV1() {

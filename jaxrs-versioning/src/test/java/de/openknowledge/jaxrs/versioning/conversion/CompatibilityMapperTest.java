@@ -19,6 +19,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import de.openknowledge.jaxrs.versioning.model.AddressV1;
+import de.openknowledge.jaxrs.versioning.model.LocationV1;
 import de.openknowledge.jaxrs.versioning.model.StreetV1;
 
 /**
@@ -50,10 +51,23 @@ public class CompatibilityMapperTest {
   }
 
   @Test
-  public void mapV10To14() {
+  public void mapV13To14() {
     AddressV1 address = new AddressV1(
         new StreetV1("Samplestreet", "1"),
         "12345 Samplecity");
+    mapper.map(address);
+    assertThat(address.getAddressLine1(), is("Samplestreet"));
+    assertThat(address.getAddressLine2(), is(nullValue()));
+  }
+
+  @Test
+  public void mapV14To15() {
+    AddressV1 address = new AddressV1() {{
+      addressLine1 = "Samplestreet 1";
+      addressLine2 = "";
+      zipCode = "12345";
+      cityName = "Samplecity";
+    }};
     mapper.map(address);
     assertThat(address.getAddressLine1(), is("Samplestreet"));
     assertThat(address.getAddressLine2(), is(nullValue()));

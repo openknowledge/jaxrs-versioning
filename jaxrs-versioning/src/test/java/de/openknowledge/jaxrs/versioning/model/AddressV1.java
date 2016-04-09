@@ -34,10 +34,14 @@ public class AddressV1 {
 
   private String city;
   
-  @MovedFrom("street/name")
-  private String addressLine1;
+  protected String zipCode;
+
+  protected String cityName;
   
-  private String addressLine2;
+  @MovedFrom("street/name")
+  protected String addressLine1;
+  
+  protected String addressLine2;
   
   private LocationV1 location;
 
