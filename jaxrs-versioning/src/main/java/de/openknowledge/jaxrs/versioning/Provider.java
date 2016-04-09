@@ -12,9 +12,12 @@
  */
 package de.openknowledge.jaxrs.versioning;
 
+import de.openknowledge.jaxrs.versioning.conversion.VersionContext;
+
 /**
+ * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
 public interface Provider {
-  public Object get();
+  public Object get(VersionContext versionContext);
 }
