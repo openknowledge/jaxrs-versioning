@@ -69,7 +69,9 @@ public class CompatibilityMapperTest {
       cityName = "Samplecity";
     }};
     mapper.map(address);
-    assertThat(address.getAddressLine1(), is("Samplestreet"));
-    assertThat(address.getAddressLine2(), is(nullValue()));
+    assertThat(address.getAddressLine1(), is("Samplestreet 1"));
+    assertThat(address.getAddressLine2(), is(""));
+    assertThat(address.getLocation().getZipCode(), is("12345"));
+    assertThat(address.getLocation().getCityName(), is("Samplecity"));
   }
 }

@@ -74,6 +74,9 @@ public class CompatibilityMapper {
       return new VersionPropertyValue(property, context.getParent());
     }
     Object value = property.get(context.getParent());
+    if (value == null) {
+      value = versionTypeFactory.get(property.getType()).newInstance();
+    }
     return getPropertyValue(versionTypeFactory.get(property.getType()), pathElements, index + 1, context.getChildContext(value));
   }
 
