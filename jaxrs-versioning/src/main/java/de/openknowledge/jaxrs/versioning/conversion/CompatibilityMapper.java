@@ -22,17 +22,18 @@ public class CompatibilityMapper {
 
     private VersionTypeFactory versionTypeFactory;
 
-    CompatibilityMapper (VersionTypeFactory factory) {
+    CompatibilityMapper(VersionTypeFactory factory) {
         versionTypeFactory = factory;
     }
+
     public void map(Object object) {
         VersionType versionType = versionTypeFactory.get(object.getClass());
 
         for (VersionProperty versionProperty : versionType.getProperties()) {
             MovedFrom movedFrom = versionProperty.getAnnotation(MovedFrom.class);
 
-            if(getPrevious(versionType,versionProperty, movedFrom, object) == null) {
-                getNext(versionType,versionProperty, movedFrom, object);
+            if (getPrevious(versionType, versionProperty, movedFrom, object) == null) {
+                getNext(versionType, versionProperty, movedFrom, object);
 
             }
 
@@ -53,23 +54,26 @@ public class CompatibilityMapper {
     }
 
     private Object getPrevious(VersionType versionType, VersionProperty property, MovedFrom movedFrom, Object object) {
-        if(movedFrom == null && property.get(object) == null) {
+        if (movedFrom == null && property.get(object) == null) {
             //root
             return versionType.getProperty(movedFrom.value()).get(object);
         }
-        if(property.get(object) == null) {
+        if (property.get(object) == null) {
 
 
-            return getPrevious(versionType,versionType.getProperty(movedFrom.value()),movedFrom,object);
+            return getPrevious(versionType, versionType.getProperty(movedFrom.value()), movedFrom, object);
         }
         return property.get(object);
 
     }
 
-    private VersionProperty getNext(VersionType type, MovedFrom movedFrom ) {
-        return type.getProperty(movedFrom.value());
+    private VersionProperty getNext(VersionType type, MovedFrom movedFrom) {
+        VersionProperty property = type.getProperty(movedFrom.value());
+        if (property == null) {
+            throw new IllegalArgumentException("@MoveFrom contains unknown property " + movedFrom.value());
+        }
+        return property;
     }
-
 
 
 }
