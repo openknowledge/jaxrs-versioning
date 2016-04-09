@@ -1,5 +1,6 @@
-package java.de.openknowledge.jaxrs.versioning.conversion;
-import
+package de.openknowledge.jaxrs.versioning.conversion;
+
+import org.junit.Test;
 
 /**
  * @author Philipp Geers - open knowledge GmbH
