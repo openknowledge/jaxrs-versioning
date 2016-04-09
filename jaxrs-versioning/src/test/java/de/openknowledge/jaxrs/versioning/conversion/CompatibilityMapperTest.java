@@ -12,13 +12,13 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
-import de.openknowledge.jaxrs.versioning.model.StreetV1;
-import de.openknowledge.jaxrs.versioning.model.AddressV2;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import de.openknowledge.jaxrs.versioning.model.StreetV1;
 
 /**
  * @author Arne Limburg - open knowledge GmbH

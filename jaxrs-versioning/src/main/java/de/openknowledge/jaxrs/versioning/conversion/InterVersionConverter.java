@@ -67,7 +67,11 @@ public class InterVersionConverter {
     for (VersionProperty property: targetVersionType.getProperties()) {
       VersionProperty previousProperty = previousVersionType.getProperty(property.getName());
       if (previousProperty != null) {
-        property.set(target, previousProperty.get(previous));
+        if (property.getType().equals(previousProperty.getType())) {
+          property.set(target, previousProperty.get(previous));
+        } else {
+          property.set(target, map(previousProperty.get(previous), property.getType()));
+        }
       }
     }
     mapper.map(target);

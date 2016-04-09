@@ -15,7 +15,6 @@ package de.openknowledge.jaxrs.versioning.conversion;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -50,11 +49,8 @@ public class FieldVersionType implements VersionType {
   }
 
   @Override
-  public VersionProperty getProperty (String name) {
+  public VersionProperty getProperty(String name) {
     VersionProperty versionProperty = fields.get(name);
-    if(versionProperty == null) {
-      throw new IllegalArgumentException("@MovedFrom contains unknown property: " + name );
-    }
     return versionProperty;
   }
 

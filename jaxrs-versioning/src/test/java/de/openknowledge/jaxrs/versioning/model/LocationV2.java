@@ -18,20 +18,23 @@ package de.openknowledge.jaxrs.versioning.model;
  */
 public class LocationV2 {
 
-    private String zipCode;
+  private String zipCode;
 
-    private String cityName;
+  private String cityName;
 
-    public LocationV2(String zipCode, String cityName) {
-        this.zipCode = zipCode;
-        this.cityName = cityName;
-    }
+  protected LocationV2() {
+  }
 
-    public String getZipCode() {
-        return zipCode;
-    }
+  public LocationV2(String zipCode, String cityName) {
+    this.zipCode = zipCode;
+    this.cityName = cityName;
+  }
 
-    public String getCityName() {
-        return cityName;
-    }
+  public String getZipCode() {
+    return zipCode;
+  }
+
+  public String getCityName() {
+    return cityName;
+  }
 }
