@@ -63,7 +63,7 @@ public class AddressResourceTest {
   }
 
   @Test
-  public void getAddress(@ArquillianResource URL url) throws IOException {
+  public void getAddressV10(@ArquillianResource URL url) throws IOException {
     JSONObject address = new JSONObject(IOUtils.toString(new URL(url, "v1/addresses/42").openStream()));
     JSONObject street = address.getJSONObject("street");
     assertThat(street.getString("name"), is("Samplestreet"));
@@ -72,13 +72,114 @@ public class AddressResourceTest {
   }
 
   @Test
-  public void postAddress(@ArquillianResource URL url) throws IOException {
+  public void postAddressV10(@ArquillianResource URL url) throws IOException {
     InputStream result = post(new URL(url, "v1/addresses/42"), "address_v1_0.json");
     
     JSONObject address = new JSONObject(IOUtils.toString(result));
     JSONObject street = address.getJSONObject("street");
     assertThat(street.getString("name"), is("Samplestreet"));
     assertThat(street.getString("number"), is("1"));
+    assertThat(address.getString("city"), is("12345 Samplecity"));
+  }
+
+  @Test
+  public void getAddressV11(@ArquillianResource URL url) throws IOException {
+    JSONObject address = new JSONObject(IOUtils.toString(new URL(url, "v1/addresses/42").openStream()));
+    JSONObject street = address.getJSONObject("street");
+    assertThat(street.getString("streetName"), is("Samplestreet"));
+    assertThat(street.getString("streetNumber"), is("1"));
+    assertThat(address.getString("city"), is("12345 Samplecity"));
+  }
+
+  @Test
+  public void postAddressV11(@ArquillianResource URL url) throws IOException {
+    InputStream result = post(new URL(url, "v1/addresses/42"), "address_v1_1.json");
+    
+    JSONObject address = new JSONObject(IOUtils.toString(result));
+    JSONObject street = address.getJSONObject("street");
+    assertThat(street.getString("streetName"), is("Samplestreet"));
+    assertThat(street.getString("streetNumber"), is("1"));
+    assertThat(address.getString("city"), is("12345 Samplecity"));
+  }
+
+  @Test
+  public void getAddressV12(@ArquillianResource URL url) throws IOException {
+    JSONObject address = new JSONObject(IOUtils.toString(new URL(url, "v1/addresses/42").openStream()));
+    JSONObject street = address.getJSONObject("street");
+    assertThat(street.getString("streetName"), is("Samplestreet"));
+    assertThat(street.getString("houseNumber"), is("1"));
+    assertThat(address.getString("city"), is("12345 Samplecity"));
+  }
+
+  @Test
+  public void postAddressV12(@ArquillianResource URL url) throws IOException {
+    InputStream result = post(new URL(url, "v1/addresses/42"), "address_v1_2.json");
+    
+    JSONObject address = new JSONObject(IOUtils.toString(result));
+    JSONObject street = address.getJSONObject("street");
+    assertThat(street.getString("streetName"), is("Samplestreet"));
+    assertThat(street.getString("houseNumber"), is("1"));
+    assertThat(address.getString("city"), is("12345 Samplecity"));
+  }
+
+  @Test
+  public void getAddressV13(@ArquillianResource URL url) throws IOException {
+    JSONObject address = new JSONObject(IOUtils.toString(new URL(url, "v1/addresses/42").openStream()));
+    JSONObject street = address.getJSONObject("street");
+    assertThat(street.getString("addressLine1"), is("Samplestreet 1"));
+    assertThat(street.getString("addressLine2"), is(""));
+    assertThat(address.getString("city"), is("12345 Samplecity"));
+  }
+
+  @Test
+  public void postAddressV13(@ArquillianResource URL url) throws IOException {
+    InputStream result = post(new URL(url, "v1/addresses/42"), "address_v1_3.json");
+    
+    JSONObject address = new JSONObject(IOUtils.toString(result));
+    JSONObject street = address.getJSONObject("street");
+    assertThat(street.getString("addressLine1"), is("Samplestreet 1"));
+    assertThat(street.getString("addressLine2"), is(""));
+    assertThat(address.getString("city"), is("12345 Samplecity"));
+  }
+
+  @Test
+  public void getAddressV14(@ArquillianResource URL url) throws IOException {
+    JSONObject address = new JSONObject(IOUtils.toString(new URL(url, "v1/addresses/42").openStream()));
+    assertThat(address.getString("addressLine1"), is("Samplestreet 1"));
+    assertThat(address.getString("addressLine2"), is(""));
+    assertThat(address.getString("zipCode"), is("12345"));
+    assertThat(address.getString("cityName"), is("Samplecity"));
+  }
+
+  @Test
+  public void postAddressV14(@ArquillianResource URL url) throws IOException {
+    InputStream result = post(new URL(url, "v1/addresses/42"), "address_v1_4.json");
+    
+    JSONObject address = new JSONObject(IOUtils.toString(result));
+    assertThat(address.getString("addressLine1"), is("Samplestreet 1"));
+    assertThat(address.getString("addressLine2"), is(""));
+    assertThat(address.getString("zipCode"), is("12345"));
+    assertThat(address.getString("cityName"), is("Samplecity"));
+  }
+
+  @Test
+  public void getAddressV15(@ArquillianResource URL url) throws IOException {
+    JSONObject address = new JSONObject(IOUtils.toString(new URL(url, "v1/addresses/42").openStream()));
+    JSONObject location = address.getJSONObject("location");
+    assertThat(address.getString("addressLine1"), is("Samplestreet 1"));
+    assertThat(address.getString("addressLine2"), is(""));
+    assertThat(location.getString("zipCode"), is("12345"));
+    assertThat(location.getString("cityName"), is("Samplecity"));
+  }
+
+  @Test
+  public void postAddressV15(@ArquillianResource URL url) throws IOException {
+    InputStream result = post(new URL(url, "v1/addresses/42"), "address_v1_5.json");
+    
+    JSONObject address = new JSONObject(IOUtils.toString(result));
+    JSONObject street = address.getJSONObject("street");
+    assertThat(street.getString("addressLine1"), is("Samplestreet 1"));
+    assertThat(street.getString("addressLine2"), is(""));
     assertThat(address.getString("city"), is("12345 Samplecity"));
   }
 
