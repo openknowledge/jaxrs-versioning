@@ -20,60 +20,64 @@ import de.openknowledge.jaxrs.versioning.MovedFrom;
  */
 public class CompatibilityMapper {
 
-    private VersionTypeFactory versionTypeFactory;
+  private VersionTypeFactory versionTypeFactory;
 
-    CompatibilityMapper(VersionTypeFactory factory) {
-        versionTypeFactory = factory;
-    }
+  CompatibilityMapper(VersionTypeFactory factory) {
+    versionTypeFactory = factory;
+  }
 
-    public void map(Object object) {
-        VersionType versionType = versionTypeFactory.get(object.getClass());
+  public void map(Object object) {
+    VersionType versionType = versionTypeFactory.get(object.getClass());
 
-        for (VersionProperty versionProperty : versionType.getProperties()) {
-            MovedFrom movedFrom = versionProperty.getAnnotation(MovedFrom.class);
+    for (VersionProperty versionProperty : versionType.getProperties()) {
+      MovedFrom movedFrom = versionProperty.getAnnotation(MovedFrom.class);
 
-            if (getPrevious(versionType, versionProperty, movedFrom, object) == null) {
-                getNext(versionType, versionProperty, movedFrom, object);
-
-            }
-
-//            if(versionProperty.get(object) == null) {
-//                //parent
-//               versionProperty.set(object, versionType.getProperty(movedFrom.value()).get(object));
-//
-//                // falls parent null, value vom child
-//            } else {
-//                versionType.getProperty(movedFrom.value()).set(object, versionProperty.get(object));
-//            }
+      if (movedFrom == null) {
+        continue;
+      }
+      Object value = versionProperty.get(object);
+      if (value == null) {
+        value = getPrevious(versionType, movedFrom, object);
+        if (value != null) {
+          versionProperty.set(object, value);
         }
+      } else {
+        setValue(versionType, movedFrom, object, value);
+      }
 
     }
 
-    private Object getNext(VersionType versionType, VersionProperty property, MovedFrom movedFrom, Object object) {
-        return null;
+  }
+
+  private void setValue(VersionType versionType, MovedFrom movedFrom, Object base, Object value) {
+    VersionProperty property = getVersionProperty(versionType, movedFrom);
+    property.set(base, value);
+    movedFrom = property.getAnnotation(MovedFrom.class);
+    if (movedFrom != null) {
+      setValue(versionType, movedFrom, base, value);
     }
+  }
 
-    private Object getPrevious(VersionType versionType, VersionProperty property, MovedFrom movedFrom, Object object) {
-        if (movedFrom == null && property.get(object) == null) {
-            //root
-            return versionType.getProperty(movedFrom.value()).get(object);
-        }
-        if (property.get(object) == null) {
-
-
-            return getPrevious(versionType, versionType.getProperty(movedFrom.value()), movedFrom, object);
-        }
-        return property.get(object);
-
+  private VersionProperty getVersionProperty(VersionType versionType, MovedFrom movedFrom) {
+    VersionProperty property = versionType.getProperty(movedFrom.value());
+    if (property == null) {
+      throw new IllegalArgumentException("@MoveFrom contains unknown property " + movedFrom.value());
     }
+    return property;
+  }
 
-    private VersionProperty getNext(VersionType type, MovedFrom movedFrom) {
-        VersionProperty property = type.getProperty(movedFrom.value());
-        if (property == null) {
-            throw new IllegalArgumentException("@MoveFrom contains unknown property " + movedFrom.value());
-        }
-        return property;
+
+  private Object getPrevious(VersionType versionType, MovedFrom movedFrom, Object object) {
+    VersionProperty property = getVersionProperty(versionType, movedFrom);
+    Object value = property.get(object);
+    if (value != null) {
+      return value;
     }
-
-
+    movedFrom = property.getAnnotation(MovedFrom.class);
+    if (movedFrom == null) {
+      //root
+      return null;
+    }
+    return getPrevious(versionType, movedFrom, object);
+  }
 }
