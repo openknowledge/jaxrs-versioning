@@ -96,6 +96,11 @@
       <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+      <version>2.0.0</version>
+    </dependency>
   </dependencies>
 
   <profiles>
@@ -106,31 +111,14 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.jboss.spec.javax.faces</groupId>
-          <artifactId>jboss-jsf-api_2.2_spec</artifactId>
-          <version>2.2.12</version>
-          <scope>provided</scope>
+          <groupId>org.jboss.resteasy</groupId>
+	      <artifactId>jaxrs-api</artifactId>
+          <version>3.0.12.Final</version>
         </dependency>
         <dependency>
           <groupId>javax.servlet</groupId>
           <artifactId>javax.servlet-api</artifactId>
           <version>3.0.1</version>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.jboss.spec.javax.el</groupId>
-          <artifactId>jboss-el-api_3.0_spec</artifactId>
-          <version>1.0.5.Final</version>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>javax.enterprise</groupId>
-          <artifactId>cdi-api</artifactId>
-          <scope>provided</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.hibernate.javax.persistence</groupId>
-          <artifactId>hibernate-jpa-2.1-api</artifactId>
           <scope>provided</scope>
         </dependency>
         <dependency>
