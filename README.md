@@ -57,6 +57,7 @@ accordingly. You only have to specify the previous version via annotation.
 How to integrate the framework
 ==============================
 Simply put the jar in your classpath and specify a {version} path param in your REST resource.
+
     @Path("addresses/{version}")
     public class AddressResource {
     
