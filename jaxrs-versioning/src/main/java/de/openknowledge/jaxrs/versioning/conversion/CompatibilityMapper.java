@@ -20,18 +20,56 @@ import de.openknowledge.jaxrs.versioning.MovedFrom;
  */
 public class CompatibilityMapper {
 
-    private VersionTypeFactory versionTypeFactory = new VersionTypeFactory();
+    private VersionTypeFactory versionTypeFactory;
+
+    CompatibilityMapper (VersionTypeFactory factory) {
+        versionTypeFactory = factory;
+    }
     public void map(Object object) {
         VersionType versionType = versionTypeFactory.get(object.getClass());
 
         for (VersionProperty versionProperty : versionType.getProperties()) {
             MovedFrom movedFrom = versionProperty.getAnnotation(MovedFrom.class);
-            if (movedFrom == null){
-                continue;
+
+            if(getPrevious(versionType,versionProperty, movedFrom, object) == null) {
+                getNext(versionType,versionProperty, movedFrom, object);
+
             }
 
-            versionType.getProperty(movedFrom.value());
-
+//            if(versionProperty.get(object) == null) {
+//                //parent
+//               versionProperty.set(object, versionType.getProperty(movedFrom.value()).get(object));
+//
+//                // falls parent null, value vom child
+//            } else {
+//                versionType.getProperty(movedFrom.value()).set(object, versionProperty.get(object));
+//            }
         }
+
     }
+
+    private Object getNext(VersionType versionType, VersionProperty property, MovedFrom movedFrom, Object object) {
+        return null;
+    }
+
+    private Object getPrevious(VersionType versionType, VersionProperty property, MovedFrom movedFrom, Object object) {
+        if(movedFrom == null && property.get(object) == null) {
+            //root
+            return versionType.getProperty(movedFrom.value()).get(object);
+        }
+        if(property.get(object) == null) {
+
+
+            return getPrevious(versionType,versionType.getProperty(movedFrom.value()),movedFrom,object);
+        }
+        return property.get(object);
+
+    }
+
+    private VersionProperty getNext(VersionType type, MovedFrom movedFrom ) {
+        return type.getProperty(movedFrom.value());
+    }
+
+
+
 }
