@@ -24,5 +24,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD})
 public @interface Added {
-  Class<?> provider();
+  Class<? extends Provider> provider() default Provider.class;
 }
