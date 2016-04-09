@@ -25,4 +25,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD})
 public @interface Added {
   Class<? extends Provider> provider() default Provider.class;
+  String defaultValue() default "";
 }

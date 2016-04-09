@@ -12,7 +12,10 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import de.openknowledge.jaxrs.versioning.Added;
 import de.openknowledge.jaxrs.versioning.MovedFrom;
+import de.openknowledge.jaxrs.versioning.Provider;
+import de.openknowledge.jaxrs.versioning.Removed;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
@@ -31,13 +34,22 @@ public class CompatibilityMapper {
 
     for (VersionProperty versionProperty : versionType.getProperties()) {
       MovedFrom movedFrom = versionProperty.getAnnotation(MovedFrom.class);
+      Added added = versionProperty.getAnnotation(Added.class);
+      Removed removed = versionProperty.getAnnotation(Removed.class);
 
-      if (movedFrom == null) {
+      if (movedFrom == null && added == null && removed == null) {
         continue;
       }
       Object value = versionProperty.get(object);
       if (value == null) {
-        value = getPrevious(versionType, movedFrom, new VersionContext(object));
+        if (movedFrom != null) {
+          value = getPrevious(versionType, movedFrom, new VersionContext(object));
+        } else if (added != null ) {
+          value = getValue(versionProperty, added.defaultValue(), added.provider(), new VersionContext(object));
+        } else {// if (removed != null)
+          value = getValue(versionProperty, removed.defaultValue(), removed.provider(), new VersionContext(object));
+        }
+        // TODO check if more than one annotation is set
         if (value != null) {
           versionProperty.set(object, value);
         }
@@ -47,6 +59,21 @@ public class CompatibilityMapper {
 
     }
 
+  }
+
+  private Object getValue(VersionProperty property, String defaultValue, Class<? extends Provider> provider, VersionContext context) {
+    // TODO check if both are set
+    if (!defaultValue.equals("")) {
+      return defaultValue;
+    } else if (provider != Provider.class) {
+      try {
+        return provider.newInstance().get(context);
+      } catch (ReflectiveOperationException e) {
+        throw new IllegalStateException(e);
+      }
+    } else {
+      return versionTypeFactory.get(property.getType()).newInstance();
+    }
   }
 
   private void setValue(VersionType versionType, MovedFrom movedFrom, Object value, VersionContext context) {
