@@ -19,7 +19,6 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import de.openknowledge.jaxrs.versioning.model.AddressV1;
-import de.openknowledge.jaxrs.versioning.model.LocationV1;
 import de.openknowledge.jaxrs.versioning.model.StreetV1;
 
 /**

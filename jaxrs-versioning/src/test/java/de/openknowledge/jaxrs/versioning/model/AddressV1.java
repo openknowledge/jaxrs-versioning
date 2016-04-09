@@ -15,6 +15,7 @@ package de.openknowledge.jaxrs.versioning.model;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import de.openknowledge.jaxrs.versioning.Added;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
@@ -42,7 +43,8 @@ public class AddressV1 {
   protected String addressLine1;
   
   protected String addressLine2;
-  
+
+  @Added
   private LocationV1 location;
 
   protected AddressV1() {
