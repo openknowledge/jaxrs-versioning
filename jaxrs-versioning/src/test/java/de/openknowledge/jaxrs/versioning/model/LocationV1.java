@@ -12,40 +12,26 @@
  */
 package de.openknowledge.jaxrs.versioning.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
 /**
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
-public class AddressV1 {
+public class LocationV1 {
 
-  private StreetV1 street;
+    private String zipCode;
 
-  private String city;
-  
-  private String addressLine1;
-  
-  private String addressLine2;
-  
-  private LocationV1 location;
+    private String cityName;
 
-  public AddressV1(StreetV1 street, String city) {
-    this.street = street;
-    this.city = city;
-  }
+    public LocationV1(String zipCode, String cityName) {
+        this.zipCode = zipCode;
+        this.cityName = cityName;
+    }
 
-  public AddressV1(String addressLine1, String addressLine2, LocationV1 location) {
-    this.addressLine1 = addressLine1;
-    this.addressLine2 = addressLine2;
-    this.location = location;
-  }
+    public String getZipCode() {
+        return zipCode;
+    }
 
-  public StreetV1 getStreet() {
-    return street;
-  }
+    public String getCityName() {
+        return cityName;
+    }
 }

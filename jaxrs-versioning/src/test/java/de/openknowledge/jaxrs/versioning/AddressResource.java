@@ -23,7 +23,7 @@ import javax.ws.rs.core.MediaType;
 import org.json.JSONObject;
 
 import de.openknowledge.jaxrs.versioning.model.AddressV1;
-import de.openknowledge.jaxrs.versioning.model.StreetV1;
+import de.openknowledge.jaxrs.versioning.model.LocationV1;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
@@ -37,11 +37,11 @@ public class AddressResource {
   @Path("/{id}")
   public AddressV1 getAddress(@PathParam("id") int id) {
     return new AddressV1(
-        new StreetV1(
-            "Samplestreet",
-            "1"
-        ),
-        "12345 Samplecity");
+        "Samplestreet 1",
+        "",
+        new LocationV1(
+            "12345",
+            "Samplecity"));
   }
 
   @POST
@@ -50,19 +50,21 @@ public class AddressResource {
   @Path("/{id}")
   public AddressV1 createAddress(String addressJson) {
     JSONObject address = new JSONObject(addressJson);
-    if (!address.getJSONObject("street").getString("name").equals("Samplestreet")) {
-      throw new IllegalArgumentException("wrong street");
+    if (!address.getString("addressLine1").equals("Samplestreet 1")) {
+      throw new IllegalArgumentException("wrong address line 1");
     }
-    if (!address.getJSONObject("street").getString("number").equals("1")) {
-      throw new IllegalArgumentException("wrong number");
+    if (!address.getString("addressLine2").equals("")) {
+      throw new IllegalArgumentException("wrong address line 2");
     }
-    if (!address.getString("city").equals("12345 Samplecity")) {
-      throw new IllegalArgumentException("wrong city");
+    if (!address.getJSONObject("location").getString("zipCode").equals("12345")) {
+      throw new IllegalArgumentException("wrong zip code");
     }
     return new AddressV1(
-        new StreetV1(
-            address.getJSONObject("street").getString("name"),
-            address.getJSONObject("street").getString("number")),
-        address.getString("city"));
+        address.getString("addressLine1"),
+        address.getString("addressLine2"),
+        new LocationV1(
+            address.getJSONObject("location").getString("zipCode"),
+            address.getJSONObject("location").getString("cityName")
+        ));
   }
 }
