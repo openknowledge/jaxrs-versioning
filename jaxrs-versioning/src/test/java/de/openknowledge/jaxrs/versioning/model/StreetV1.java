@@ -34,6 +34,9 @@ public class StreetV1 {
   @MovedFrom("number")
   private String streetNumber;
 
+  @MovedFrom("streetNumber")
+  private String houseNumber;
+
   protected StreetV1() {
   }
 
@@ -56,5 +59,9 @@ public class StreetV1 {
 
   public String getStreetNumber() {
     return streetNumber;
+  }
+
+  public String getHouseNumber() {
+    return houseNumber;
   }
 }
