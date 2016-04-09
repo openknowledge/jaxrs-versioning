@@ -12,10 +12,10 @@
  */
 package de.openknowledge.jaxrs.versioning.model;
 
-import de.openknowledge.jaxrs.versioning.MovedFrom;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+
+import de.openknowledge.jaxrs.versioning.MovedFrom;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
@@ -36,6 +36,8 @@ public class StreetV1 {
 
   @MovedFrom("streetNumber")
   private String houseNumber;
+
+  private String addressLine1;
 
   protected StreetV1() {
   }

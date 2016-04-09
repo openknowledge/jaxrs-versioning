@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
+import de.openknowledge.jaxrs.versioning.MovedFrom;
 import de.openknowledge.jaxrs.versioning.SupportedVersion;
 
 /**
@@ -33,6 +34,7 @@ public class AddressV1 {
 
   private String city;
   
+  @MovedFrom("street/name")
   private String addressLine1;
   
   private String addressLine2;

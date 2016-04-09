@@ -50,30 +50,38 @@ public class CompatibilityMapper {
   }
 
   private void setValue(VersionType versionType, MovedFrom movedFrom, Object base, Object value) {
-    VersionProperty property = getVersionProperty(versionType, movedFrom);
-    property.set(base, value);
-    movedFrom = property.getAnnotation(MovedFrom.class);
+    VersionPropertyValue propertyValue = getPropertyValue(versionType, base, movedFrom);
+    propertyValue.set(value);
+    movedFrom = propertyValue.getAnnotation(MovedFrom.class);
     if (movedFrom != null) {
       setValue(versionType, movedFrom, base, value);
     }
   }
 
-  private VersionProperty getVersionProperty(VersionType versionType, MovedFrom movedFrom) {
-    VersionProperty property = versionType.getProperty(movedFrom.value());
+  private VersionPropertyValue getPropertyValue(VersionType versionType, Object base, MovedFrom movedFrom) {
+    return getPropertyValue(versionType, base, movedFrom.value().split("/"), 0);
+  }
+
+  private VersionPropertyValue getPropertyValue(VersionType versionType, Object base, String[] pathElements, int index) {
+    VersionProperty property = versionType.getProperty(pathElements[index]);
     if (property == null) {
-      throw new IllegalArgumentException("@MoveFrom contains unknown property " + movedFrom.value());
+      throw new IllegalArgumentException("@MoveFrom contains unknown property " + pathElements[index]);
     }
-    return property;
+    if (pathElements.length == index + 1) {
+      return new VersionPropertyValue(property, base);
+    }
+    Object value = property.get(base);
+    return getPropertyValue(versionTypeFactory.get(property.getType()), value, pathElements, index + 1);
   }
 
 
   private Object getPrevious(VersionType versionType, MovedFrom movedFrom, Object object) {
-    VersionProperty property = getVersionProperty(versionType, movedFrom);
-    Object value = property.get(object);
+    VersionPropertyValue propertyValue = getPropertyValue(versionType, object, movedFrom);
+    Object value = propertyValue.get();
     if (value != null) {
       return value;
     }
-    movedFrom = property.getAnnotation(MovedFrom.class);
+    movedFrom = propertyValue.getAnnotation(MovedFrom.class);
     if (movedFrom == null) {
       //root
       return null;

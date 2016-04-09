@@ -13,18 +13,18 @@
 package de.openknowledge.jaxrs.versioning.conversion;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
+import de.openknowledge.jaxrs.versioning.model.AddressV1;
 import de.openknowledge.jaxrs.versioning.model.StreetV1;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
-@Ignore
 public class CompatibilityMapperTest {
 
   private VersionTypeFactory factory = new VersionTypeFactory();
@@ -34,7 +34,6 @@ public class CompatibilityMapperTest {
   @Test
   public void mapV10To11() {
     StreetV1 streetV1 = new StreetV1() {
-
       {
         name = "Samplestreet";
         number = "1";
@@ -50,4 +49,13 @@ public class CompatibilityMapperTest {
 
   }
 
+  @Test
+  public void mapV10To14() {
+    AddressV1 address = new AddressV1(
+        new StreetV1("Samplestreet", "1"),
+        "12345 Samplecity");
+    mapper.map(address);
+    assertThat(address.getAddressLine1(), is("Samplestreet"));
+    assertThat(address.getAddressLine2(), is(nullValue()));
+  }
 }
