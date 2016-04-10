@@ -33,10 +33,11 @@ public class AddressV1 {
 
   private StreetV1 street;
 
-  private String city;
-  
+  protected String city;
+//  @Added(provider = ZipCodeProvider.class)
   protected String zipCode;
 
+//  @Added(provider = CityNameProvider.class)
   protected String cityName;
   
   @MovedFrom("street/name")
@@ -63,6 +64,10 @@ public class AddressV1 {
 
   public StreetV1 getStreet() {
     return street;
+  }
+
+  public String getCity() {
+    return city;
   }
 
   public String getAddressLine1() {

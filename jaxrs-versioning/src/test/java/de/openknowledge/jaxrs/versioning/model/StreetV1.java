@@ -15,6 +15,7 @@ package de.openknowledge.jaxrs.versioning.model;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import de.openknowledge.jaxrs.versioning.Added;
 import de.openknowledge.jaxrs.versioning.MovedFrom;
 
 /**
@@ -37,9 +38,13 @@ public class StreetV1 {
   @MovedFrom("streetNumber")
   private String houseNumber;
 
+  @Added(provider = StreetAggregationProvider.class)
   private String addressLine1;
 
-  protected StreetV1() {
+  protected StreetV1() {}
+
+  public StreetV1(String addressLineOne) {
+    addressLine1 = addressLineOne;
   }
 
   public StreetV1(String name, String number) {
@@ -65,5 +70,13 @@ public class StreetV1 {
 
   public String getHouseNumber() {
     return houseNumber;
+  }
+
+  public String getAddressLine1() {
+    return addressLine1;
+  }
+
+  public void setAddressLine1(String addressLine1) {
+    this.addressLine1 = addressLine1;
   }
 }
