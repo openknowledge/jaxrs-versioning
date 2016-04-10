@@ -41,7 +41,7 @@ public class InterVersionConverter {
     if (targetVersion.equals(supportedVersion.version())) {
       return source;
     }
-    return convertToLowerVersion(targetVersion, map(source, supportedVersion.previous()));
+    return convertToLowerVersion(targetVersion, map(source, supportedVersion.previous(), new VersionContext()));
   }
 
   public Object convertToHigherVersion(Class<?> targetType, Object source, String sourceVersion) {
@@ -57,12 +57,13 @@ public class InterVersionConverter {
       return source;
     }
     Object previousVersion = convertToHigherVersion(supportedVersion.previous(), source, sourceVersion);
-    return map(previousVersion, targetType);
+    return map(previousVersion, targetType, new VersionContext());
   }
 
-  private Object map(Object previous, Class<?> targetType) {
+  private Object map(Object previous, Class<?> targetType, VersionContext context) {
     VersionType targetVersionType = factory.get(targetType);
     Object target = targetVersionType.newInstance();
+    context = context.getChildContext(target);
     VersionType previousVersionType = factory.get(previous.getClass());
     for (VersionProperty property: targetVersionType.getProperties()) {
       VersionProperty previousProperty = previousVersionType.getProperty(property.getName());
@@ -70,11 +71,11 @@ public class InterVersionConverter {
         if (property.getType().equals(previousProperty.getType())) {
           property.set(target, previousProperty.get(previous));
         } else {
-          property.set(target, map(previousProperty.get(previous), property.getType()));
+          property.set(target, map(previousProperty.get(previous), property.getType(), context));
         }
       }
     }
-    mapper.map(target);
+    mapper.map(target, context);
     return target;
   }
 }

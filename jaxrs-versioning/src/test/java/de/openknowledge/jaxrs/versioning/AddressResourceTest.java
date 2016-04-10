@@ -154,7 +154,6 @@ public class AddressResourceTest {
     assertThat(address.getString("city"), is("12345 Samplecity"));
   }
 
-  @Ignore
   @Test
   public void getAddressV14(@ArquillianResource URL url) throws IOException {
     JSONObject address = new JSONObject(IOUtils.toString(new URL(url, "v1/addresses/42").openStream()));
@@ -164,7 +163,6 @@ public class AddressResourceTest {
     assertThat(address.getString("cityName"), is("Samplecity"));
   }
 
-  @Ignore
   @Test
   public void postAddressV14(@ArquillianResource URL url) throws IOException {
     InputStream result = post(new URL(url, "v1/addresses/42"), "address_v1_4.json");

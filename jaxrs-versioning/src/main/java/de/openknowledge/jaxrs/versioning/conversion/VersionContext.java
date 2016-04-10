@@ -23,8 +23,12 @@ public class VersionContext {
 
   private List<Object> parents;
   
-  public VersionContext(Object parent) {
+  public VersionContext() {
     parents = new ArrayList<>();
+  }
+
+  public VersionContext(Object parent) {
+    this();
     parents.add(parent);
   }
 

@@ -33,7 +33,7 @@ public class CompatibilityMapper {
     map(object, new VersionContext(object));
   }
 
-  private void map(Object object, VersionContext context) {
+  public void map(Object object, VersionContext context) {
     VersionType versionType = versionTypeFactory.get(object.getClass());
 
     for (VersionProperty versionProperty : versionType.getProperties()) {
@@ -57,8 +57,8 @@ public class CompatibilityMapper {
         if (value != null) {
           versionProperty.set(object, value);
         }
-      } else {
-        setValue(versionType, movedFrom, value, new VersionContext(object));
+      } else if (movedFrom != null) {
+        setValue(versionType, movedFrom, value, context);
       }
 
     }

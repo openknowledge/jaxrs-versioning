@@ -37,6 +37,8 @@ public class InterVersionConverterTest {
     AddressV1 address = (AddressV1)converter.convertToLowerVersion("v1", new AddressV2("Samplestreet 1", "", new LocationV2("12345", "Samplecity")));
     assertThat(address.getAddressLine1(), is("Samplestreet 1"));
     assertThat(address.getAddressLine2(), is(""));
+    assertThat(address.getZipCode(), is("12345"));
+    assertThat(address.getCityName(), is("Samplecity"));
     assertThat(address.getLocation().getZipCode(), is("12345"));
     assertThat(address.getLocation().getCityName(), is("Samplecity"));
   }

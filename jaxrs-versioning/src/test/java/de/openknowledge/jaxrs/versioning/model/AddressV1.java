@@ -15,10 +15,10 @@ package de.openknowledge.jaxrs.versioning.model;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import de.openknowledge.jaxrs.versioning.Added;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
+import de.openknowledge.jaxrs.versioning.Added;
 import de.openknowledge.jaxrs.versioning.MovedFrom;
 import de.openknowledge.jaxrs.versioning.SupportedVersion;
 
@@ -76,6 +76,14 @@ public class AddressV1 {
 
   public String getAddressLine2() {
     return addressLine2;
+  }
+  
+  public String getZipCode() {
+    return zipCode;
+  }
+
+  public String getCityName() {
+    return cityName;
   }
 
   public LocationV1 getLocation() {
