@@ -31,7 +31,7 @@ import de.openknowledge.jaxrs.versioning.SupportedVersion;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AddressV1 {
 
-  private StreetV1 street;
+  protected StreetV1 street;
 
   protected String city;
 //  @Added(provider = ZipCodeProvider.class)
@@ -46,7 +46,7 @@ public class AddressV1 {
   protected String addressLine2;
 
   @Added
-  private LocationV1 location;
+  protected LocationV1 location;
 
   protected AddressV1() {
   }

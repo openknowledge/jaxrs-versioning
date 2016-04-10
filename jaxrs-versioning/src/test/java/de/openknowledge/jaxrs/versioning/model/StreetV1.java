@@ -30,16 +30,19 @@ public class StreetV1 {
   protected String number;
 
   @MovedFrom("name")
-  private String streetName;
+  protected String streetName;
 
   @MovedFrom("number")
-  private String streetNumber;
+  protected String streetNumber;
 
   @MovedFrom("streetNumber")
-  private String houseNumber;
+  protected String houseNumber;
 
   @Added(provider = StreetAggregationProvider.class)
-  private String addressLine1;
+  protected String addressLine1;
+
+  @Added(defaultValue = "")
+  protected String addressLine2;
 
   protected StreetV1() {}
 
@@ -76,7 +79,7 @@ public class StreetV1 {
     return addressLine1;
   }
 
-  public void setAddressLine1(String addressLine1) {
-    this.addressLine1 = addressLine1;
+  public String getAddressLine2() {
+    return addressLine2;
   }
 }

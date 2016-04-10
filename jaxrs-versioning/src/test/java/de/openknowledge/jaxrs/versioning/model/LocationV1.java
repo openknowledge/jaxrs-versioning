@@ -21,10 +21,10 @@ import de.openknowledge.jaxrs.versioning.MovedFrom;
 public class LocationV1 {
 
   @MovedFrom("../zipCode")
-  private String zipCode;
+  protected String zipCode;
 
   @MovedFrom("../cityName")
-  private String cityName;
+  protected String cityName;
 
   protected LocationV1() {
   }
