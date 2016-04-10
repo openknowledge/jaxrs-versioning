@@ -16,13 +16,12 @@ import de.openknowledge.jaxrs.versioning.Provider;
 import de.openknowledge.jaxrs.versioning.conversion.VersionContext;
 
 /**
- * @author Philipp Geers - open knowledge GmbH
+ * @author Arne Limburg - open knowledge GmbH
  */
-public class CityNameProvider implements Provider {
+public class CityAggregationProvider implements Provider {
   @Override
   public Object get(VersionContext versionContext) {
     AddressV1 address = (AddressV1)versionContext.getParent();
-    String[] parts = address.getCity().split(" ");
-    return parts[0];
+    return address.getZipCode() + " " + address.getCityName();
   }
 }

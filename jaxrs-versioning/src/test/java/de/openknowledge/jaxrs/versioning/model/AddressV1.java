@@ -20,6 +20,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
 import de.openknowledge.jaxrs.versioning.Added;
 import de.openknowledge.jaxrs.versioning.MovedFrom;
+import de.openknowledge.jaxrs.versioning.Removed;
 import de.openknowledge.jaxrs.versioning.SupportedVersion;
 
 /**
@@ -33,16 +34,19 @@ public class AddressV1 {
 
   protected StreetV1 street;
 
+  @Removed(provider = CityAggregationProvider.class)
   protected String city;
-//  @Added(provider = ZipCodeProvider.class)
+  
+  @Added(provider = ZipCodeProvider.class)
   protected String zipCode;
 
-//  @Added(provider = CityNameProvider.class)
+  @Added(provider = CityNameProvider.class)
   protected String cityName;
   
-  @MovedFrom("street/name")
+  @MovedFrom("street/addressLine1")
   protected String addressLine1;
   
+  @MovedFrom("street/addressLine2")
   protected String addressLine2;
 
   @Added

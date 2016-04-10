@@ -184,6 +184,7 @@ public class AddressResourceTest {
     assertThat(location.getString("cityName"), is("Samplecity"));
   }
 
+  @Ignore
   @Test
   public void postAddressV15(@ArquillianResource URL url) throws IOException {
     InputStream result = post(new URL(url, "v1/addresses/42"), "address_v1_5.json");
