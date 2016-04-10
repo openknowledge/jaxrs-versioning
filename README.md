@@ -5,14 +5,17 @@ you either have to update every client on every server-release
 or you have to take care of backward-compatibility and interface versioning,
 otherwise older clients will not work after the release.
 
-How does this framework help?
-=============================
+Backward-compatible interface development
+=========================================
 When you try to implement a backward-compatible interface by yourself,
-you have to write much boilerplate code.
-With this framework you are able to replace most of the boilerplate code with some simple annotations.
+you have to write much boilerplate code, i.e. instead of renaming an attribute,
+you have to duplicate it and map between the both.
+With this framework you are able to replace most of such boilerplate code
+with some simple annotations.
 
 Example:
 --------------------------------
+
     "address": {
        "street": {
            "name": "Samplestreet",
@@ -20,7 +23,9 @@ Example:
        },
        "city": "12345 Samplecity"
     }
+
 When you want to rename "name" of "street", you have to copy it to be backward-compatible like
+
     "address": {
        "street": {
            "name": "Samplestreet",
@@ -29,6 +34,7 @@ When you want to rename "name" of "street", you have to copy it to be backward-c
        },
        "city": "12345 Samplecity"
     }
+
 Of course your server has to deal with both kind of data, one that contains a "name"
 (from older clients) and one that contains "streetName" (from newer clients).
 When answering on such requests, both fields have to be filled.
@@ -42,11 +48,18 @@ Simply annotate the "streetName" field in Java with @MovedFrom
         private String streetName;
         private String number;
     }
+    
+With the Annotations @MovedFrom, @Added and @Removed the framework supports most of the
+use cases of backward-compatible interface development. For the more sophisticated cases
+an interface named Provider exists, that can be implemented to do the logic in java code.
+
 How to implement breaking changes?
 ==================================
-The framework supports breaking changes. Simply provide a class for every version
-and the framework will convert parameters and return values of your REST resources
-accordingly. You only have to specify the previous version via annotation.
+This framework has the concept to handle backward-compatible changes within one Java Class
+(see sample above) or a set of them.
+When you want to implement a breaking change (i.e. really remove an attribute),
+you have to switch to a different class
+and specify the version and the corresponding class of the previous version via annotation.
 
     @SupportedVersion(version = "v2", previous = StreetV1.class)
     public class Street {
@@ -66,3 +79,6 @@ Simply put the jar in your classpath and specify a {version} path param in your 
             ...
         }
     }
+    
+The framework will detect the @SupportedVersion annotation at your model class
+(Address in the example above) and do the appropriate mapping and conversion.
