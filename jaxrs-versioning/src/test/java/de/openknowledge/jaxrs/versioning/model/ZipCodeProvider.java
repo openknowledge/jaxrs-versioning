@@ -23,6 +23,6 @@ public class ZipCodeProvider implements Provider {
   public Object get(VersionContext versionContext) {
     AddressV1 address = (AddressV1)versionContext.getParent();
     String[] parts = address.getCity().split(" ");
-    return parts[1];
+    return parts[0];
   }
 }

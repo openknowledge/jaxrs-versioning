@@ -12,6 +12,10 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import java.sql.Date;
+
+import org.apache.commons.lang3.ClassUtils;
+
 import de.openknowledge.jaxrs.versioning.Added;
 import de.openknowledge.jaxrs.versioning.MovedFrom;
 import de.openknowledge.jaxrs.versioning.Provider;
@@ -57,12 +61,15 @@ public class CompatibilityMapper {
         if (value != null) {
           versionProperty.set(object, value);
         }
-      } else if (movedFrom != null) {
-        setValue(versionType, movedFrom, value, context);
+      } else {
+        if (movedFrom != null) {
+          setValue(versionType, movedFrom, value, context);
+        }
+        if (!isSimpleValue(versionProperty.getType())) {
+          map(value, context.getChildContext(value));
+        }
       }
-
     }
-
   }
 
   private Object getValue(VersionProperty property, String defaultValue, Class<? extends Provider> provider, VersionContext context) {
@@ -127,5 +134,9 @@ public class CompatibilityMapper {
       return null;
     }
     return getPrevious(versionType, movedFrom, context);
+  }
+
+  private boolean isSimpleValue(Class<?> type) {
+    return type == String.class || type == Date.class || ClassUtils.isPrimitiveOrWrapper(type);
   }
 }

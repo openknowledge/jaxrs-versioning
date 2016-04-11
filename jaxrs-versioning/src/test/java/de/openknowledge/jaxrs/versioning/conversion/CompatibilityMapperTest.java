@@ -73,6 +73,7 @@ public class CompatibilityMapperTest {
     assertThat(address, is(v15()));
   }
 
+  @Ignore
   @Test
   public void mapV13() {
     AddressV1 address = createV13();
@@ -85,6 +86,7 @@ public class CompatibilityMapperTest {
     assertThat(address, is(v15()));
   }
 
+  @Ignore
   @Test
   public void mapV14() {
     AddressV1 address = createV14();
@@ -97,6 +99,7 @@ public class CompatibilityMapperTest {
     assertThat(address, is(v15()));
   }
 
+  @Ignore
   @Test
   public void mapV15() {
     AddressV1 address = createV15();
