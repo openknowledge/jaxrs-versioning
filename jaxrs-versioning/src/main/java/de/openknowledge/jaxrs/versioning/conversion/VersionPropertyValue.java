@@ -21,22 +21,30 @@ import java.lang.annotation.Annotation;
 public class VersionPropertyValue {
 
   private VersionProperty property;
-  private Object base;
+  private VersionContext context;
 
-  public VersionPropertyValue(VersionProperty property, Object base) {
+  public VersionPropertyValue(VersionProperty property, VersionContext context) {
     this.property = property;
-    this.base = base;
+    this.context = context;
+  }
+
+  public VersionProperty getProperty() {
+    return property;
   }
 
   public Object get() {
-    return property.get(base);
+    return property.get(context.getParent());
   }
   
   public void set(Object value) {
-    property.set(base, value);
+    property.set(context.getParent(), value);
   }
 
   public <A extends Annotation> A getAnnotation(Class<A> annotationType) {
     return property.getAnnotation(annotationType);
+  }
+
+  public VersionContext getContext() {
+    return context;
   }
 }

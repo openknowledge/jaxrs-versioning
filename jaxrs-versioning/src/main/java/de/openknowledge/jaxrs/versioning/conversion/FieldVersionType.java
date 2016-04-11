@@ -37,6 +37,9 @@ public class FieldVersionType implements VersionType {
       fields.putAll(parent.fields);
     }
     for (Field field: type.getDeclaredFields()) {
+      if (field.getName().contains("$")) { // filter internal fields
+        continue;
+      }
       field.setAccessible(true);
       fields.put(field.getName(), new FieldVersionProperty(field));
     }
@@ -68,5 +71,9 @@ public class FieldVersionType implements VersionType {
     } catch (ReflectiveOperationException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  public String toString() {
+    return getClass().getSimpleName() + "[type=" + type + "]"; 
   }
 }

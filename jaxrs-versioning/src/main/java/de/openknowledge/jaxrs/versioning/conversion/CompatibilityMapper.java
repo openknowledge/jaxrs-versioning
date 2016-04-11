@@ -15,6 +15,7 @@ package de.openknowledge.jaxrs.versioning.conversion;
 import java.sql.Date;
 
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import de.openknowledge.jaxrs.versioning.Added;
 import de.openknowledge.jaxrs.versioning.MovedFrom;
@@ -43,69 +44,120 @@ public class CompatibilityMapper {
     for (VersionProperty versionProperty : versionType.getProperties()) {
       MovedFrom movedFrom = versionProperty.getAnnotation(MovedFrom.class);
       Added added = versionProperty.getAnnotation(Added.class);
-      Removed removed = versionProperty.getAnnotation(Removed.class);
 
-      if (movedFrom == null && added == null && removed == null) {
+      if (movedFrom == null && added == null) {
+        if (!isSimpleValue(versionProperty.getType())) {
+          Object value = versionProperty.get(object);
+          if (value == null) {
+            value = versionTypeFactory.get(versionProperty.getType()).newInstance();
+            versionProperty.set(object, value);
+          }
+          map(value, context.getChildContext(value));
+        }
         continue;
       }
       Object value = versionProperty.get(object);
       if (value == null) {
-        if (movedFrom != null) {
-          value = getPrevious(versionType, movedFrom, context);
-        }
-        if (value == null && added != null) {
-          value = getValue(versionProperty, added.defaultValue(), added.provider(), context);
-        }
-        if (value == null && removed != null) {
-          value = getValue(versionProperty, removed.defaultValue(), removed.provider(), context);
-        }
-        if (value != null) {
-          versionProperty.set(object, value);
-          map(versionType, movedFrom, value, context);
-        }
+        updateDependentValues(new VersionPropertyValue(versionProperty, context));
       } else {
-        map(versionType, movedFrom, value, context);
+        setDependentValues(versionType, movedFrom, added, value, context);
+        if (!isSimpleValue(value.getClass())) {
+          map(value, context.getChildContext(value));
+        }
       }
     }
   }
 
-  private void map(VersionType versionType, MovedFrom movedFrom, Object value, VersionContext context) {
+  private void updateDependentValues(VersionPropertyValue propertyValue) {
+    if (propertyValue.get() != null) {
+      return;
+    }
+    VersionContext dependentContext = propertyValue.getContext();
+    VersionType dependentType = versionTypeFactory.get(dependentContext.getParent().getClass());
+
+    MovedFrom movedFrom = propertyValue.getAnnotation(MovedFrom.class);
     if (movedFrom != null) {
-      setDependentValues(versionType, movedFrom, value, context);
-    }
-    if (!isSimpleValue(value.getClass())) {
-      map(value, context.getChildContext(value));
-    }
-  }
-
-  private Object getValue(VersionProperty property, String defaultValue, Class<? extends Provider> provider, VersionContext context) {
-    // TODO check if both are set
-    if (!defaultValue.equals("")) {
-      return defaultValue;
-    } else if (provider != Provider.class) {
-      try {
-        return provider.newInstance().get(context);
-      } catch (ReflectiveOperationException e) {
-        throw new IllegalStateException(e);
+      VersionPropertyValue dependentValue = getPropertyValue(dependentType, movedFrom.value(), dependentContext);
+      Object value = dependentValue.get();
+      if (value != null) {
+        propertyValue.set(value);
+        return;
       }
-    } else {
-      Object value = versionTypeFactory.get(property.getType()).newInstance();
-      map(value, context.getChildContext(value));
-      return value;
+      updateDependentValues(dependentValue);
+      value = dependentValue.get();
+      if (value != null) {
+        propertyValue.set(value);
+        return;
+      }
+    }
+    String defaultValue = StringUtils.EMPTY;
+    Class<? extends Provider> provider = Provider.class;
+
+    Added added = propertyValue.getAnnotation(Added.class);
+    if (added != null) {
+      for (String dependency : added.dependsOn()) {
+        VersionPropertyValue dependentValue = getPropertyValue(dependentType, dependency, dependentContext);
+        if (dependentValue.get() == null) {
+          updateDependentValues(dependentValue);
+        }
+      }
+      defaultValue = added.defaultValue();
+      provider = added.provider();
+    }
+    setValue(propertyValue, provider, defaultValue, dependentContext);
+  }
+
+  private void setValue(VersionPropertyValue value, Class<? extends Provider> provider, String defaultValue, VersionContext context) {
+    if (!provider.equals(Provider.class)) {
+      Provider providerInstance = (Provider)versionTypeFactory.get(provider).newInstance();
+      value.set(providerInstance.get(context));
+    } else if (!defaultValue.isEmpty()) {
+      value.set(defaultValue);
+    } else if (!isSimpleValue(value.getProperty().getType())) {
+      Object instance = versionTypeFactory.get(value.getProperty().getType()).newInstance();
+      value.set(instance);
+      map(instance, context.getChildContext(instance));
     }
   }
 
-  private void setDependentValues(VersionType versionType, MovedFrom movedFrom, Object value, VersionContext context) {
-    VersionPropertyValue propertyValue = getPropertyValue(versionType, movedFrom, context);
+  private void setDependentValues(VersionType versionType, MovedFrom movedFrom, Added added, Object value, VersionContext context) {
+    if (movedFrom != null) {
+      setDependentValues(versionType, movedFrom.value(), value, context);
+    }
+    if (added != null) {
+      for (String dependency: added.dependsOn()) {
+        setRemovedValues(versionType, dependency, context);
+      }
+    }
+  }
+
+  private void setDependentValues(VersionType versionType, String path, Object value, VersionContext context) {
+    VersionPropertyValue propertyValue = getPropertyValue(versionType, path, context);
     propertyValue.set(value);
-    movedFrom = propertyValue.getAnnotation(MovedFrom.class);
-    if (movedFrom != null) {
-      setDependentValues(versionType, movedFrom, value, context);
+    MovedFrom movedFrom = propertyValue.getAnnotation(MovedFrom.class);
+    Added added = propertyValue.getAnnotation(Added.class);
+    VersionType propertyParentType = versionTypeFactory.get(propertyValue.getContext().getParent().getClass()); 
+    setDependentValues(propertyParentType, movedFrom, added, value, propertyValue.getContext());
+  }
+
+  private void setRemovedValues(VersionType versionType, String dependency, VersionContext context) {
+    VersionPropertyValue propertyValue = getPropertyValue(versionType, dependency, context);
+    if (propertyValue.get() == null) {
+      Removed removed = propertyValue.getAnnotation(Removed.class);
+      if (removed != null) {
+        setValue(propertyValue, removed.provider(), removed.defaultValue(), context);
+        Object value = propertyValue.get();
+        if (value != null) {
+          MovedFrom movedFrom = propertyValue.getAnnotation(MovedFrom.class);
+          Added added = propertyValue.getAnnotation(Added.class);
+          setDependentValues(versionType, movedFrom, added, value, context);
+        }
+      }
     }
   }
 
-  private VersionPropertyValue getPropertyValue(VersionType versionType, MovedFrom movedFrom, VersionContext context) {
-    return getPropertyValue(versionType, movedFrom.value().split("/"), 0, context);
+  private VersionPropertyValue getPropertyValue(VersionType versionType, String path, VersionContext context) {
+    return getPropertyValue(versionType, path.split("/"), 0, context);
   }
 
   private VersionPropertyValue getPropertyValue(VersionType versionType, String[] pathElements, int index, VersionContext context) {
@@ -118,28 +170,14 @@ public class CompatibilityMapper {
       throw new IllegalArgumentException("@MoveFrom contains unknown property " + pathElements[index]);
     }
     if (pathElements.length == index + 1) {
-      return new VersionPropertyValue(property, context.getParent());
+      return new VersionPropertyValue(property, context);
     }
     Object value = property.get(context.getParent());
     if (value == null) {
       value = versionTypeFactory.get(property.getType()).newInstance();
     }
-    return getPropertyValue(versionTypeFactory.get(property.getType()), pathElements, index + 1, context.getChildContext(value));
-  }
-
-
-  private Object getPrevious(VersionType versionType, MovedFrom movedFrom, VersionContext context) {
-    VersionPropertyValue propertyValue = getPropertyValue(versionType, movedFrom, context);
-    Object value = propertyValue.get();
-    if (value != null) {
-      return value;
-    }
-    movedFrom = propertyValue.getAnnotation(MovedFrom.class);
-    if (movedFrom == null) {
-      //root
-      return null;
-    }
-    return getPrevious(versionType, movedFrom, context);
+    return getPropertyValue(versionTypeFactory.get(property.getType()), pathElements, index + 1,
+        context.getChildContext(value));
   }
 
   private boolean isSimpleValue(Class<?> type) {

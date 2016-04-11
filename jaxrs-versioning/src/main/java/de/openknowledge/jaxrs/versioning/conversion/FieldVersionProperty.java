@@ -65,4 +65,8 @@ public class FieldVersionProperty implements VersionProperty {
   public <A extends Annotation> A getAnnotation(Class<A> type) {
     return field.getAnnotation(type);
   }
+
+  public String toString() {
+    return getClass().getSimpleName() + "[name=" + name + "]"; 
+  }
 }

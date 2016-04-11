@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import de.openknowledge.jaxrs.versioning.Added;
 import de.openknowledge.jaxrs.versioning.MovedFrom;
+import de.openknowledge.jaxrs.versioning.Removed;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
@@ -30,18 +31,20 @@ public class StreetV1 {
   protected String number;
 
   @MovedFrom("name")
+  @Removed(provider = StreetNameProvider.class)
   protected String streetName;
 
   @MovedFrom("number")
   protected String streetNumber;
 
   @MovedFrom("streetNumber")
+  @Removed(provider = HouseNumberProvider.class)
   protected String houseNumber;
 
-  @Added(provider = StreetAggregationProvider.class)
+  @Added(provider = StreetAggregationProvider.class, dependsOn = {"streetName", "houseNumber"})
   protected String addressLine1;
 
-  @Added(defaultValue = "")
+  @Added(defaultValue = " ")
   protected String addressLine2;
 
   protected StreetV1() {}
