@@ -19,7 +19,6 @@ import static org.junit.Assert.assertThat;
 
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.openknowledge.jaxrs.versioning.model.AddressV1;
@@ -30,7 +29,6 @@ import de.openknowledge.jaxrs.versioning.model.StreetV1;
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
-//@Ignore("Fix provider")
 public class CompatibilityMapperTest {
 
   private VersionTypeFactory factory = new VersionTypeFactory();
@@ -73,7 +71,6 @@ public class CompatibilityMapperTest {
     assertThat(address, is(v15()));
   }
 
-  @Ignore
   @Test
   public void mapV13() {
     AddressV1 address = createV13();
@@ -86,7 +83,6 @@ public class CompatibilityMapperTest {
     assertThat(address, is(v15()));
   }
 
-  @Ignore
   @Test
   public void mapV14() {
     AddressV1 address = createV14();
@@ -99,7 +95,6 @@ public class CompatibilityMapperTest {
     assertThat(address, is(v15()));
   }
 
-  @Ignore
   @Test
   public void mapV15() {
     AddressV1 address = createV15();
