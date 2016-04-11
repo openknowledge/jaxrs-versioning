@@ -12,10 +12,13 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
+import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -27,7 +30,7 @@ import de.openknowledge.jaxrs.versioning.model.StreetV1;
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
-@Ignore("Fix provider")
+//@Ignore("Fix provider")
 public class CompatibilityMapperTest {
 
   private VersionTypeFactory factory = new VersionTypeFactory();
@@ -36,77 +39,77 @@ public class CompatibilityMapperTest {
 
   @Test
   public void mapV10() {
-    AddressV1 address = v10();
+    AddressV1 address = createV10();
     mapper.map(address);
-    assertThat(address).isV10();
-    assertThat(address).isV11();
-    assertThat(address).isV12();
-    assertThat(address).isV13();
-    assertThat(address).isV14();
-    assertThat(address).isV15();
+    assertThat(address, is(v10()));
+    assertThat(address, is(v11()));
+    assertThat(address, is(v12()));
+    assertThat(address, is(v13()));
+    assertThat(address, is(v14()));
+    assertThat(address, is(v15()));
   }
 
   @Test
   public void mapV11() {
-    AddressV1 address = v11();
+    AddressV1 address = createV11();
     mapper.map(address);
-    assertThat(address).isV10();
-    assertThat(address).isV11();
-    assertThat(address).isV12();
-    assertThat(address).isV13();
-    assertThat(address).isV14();
-    assertThat(address).isV15();
+    assertThat(address, is(v10()));
+    assertThat(address, is(v11()));
+    assertThat(address, is(v12()));
+    assertThat(address, is(v13()));
+    assertThat(address, is(v14()));
+    assertThat(address, is(v15()));
   }
 
   @Test
   public void mapV12() {
-    AddressV1 address = v12();
+    AddressV1 address = createV12();
     mapper.map(address);
-    assertThat(address).isV10();
-    assertThat(address).isV11();
-    assertThat(address).isV12();
-    assertThat(address).isV13();
-    assertThat(address).isV14();
-    assertThat(address).isV15();
+    assertThat(address, is(v10()));
+    assertThat(address, is(v11()));
+    assertThat(address, is(v12()));
+    assertThat(address, is(v13()));
+    assertThat(address, is(v14()));
+    assertThat(address, is(v15()));
   }
 
   @Test
   public void mapV13() {
-    AddressV1 address = v13();
+    AddressV1 address = createV13();
     mapper.map(address);
-    assertThat(address).isV10();
-    assertThat(address).isV11();
-    assertThat(address).isV12();
-    assertThat(address).isV13();
-    assertThat(address).isV14();
-    assertThat(address).isV15();
+    assertThat(address, is(v10()));
+    assertThat(address, is(v11()));
+    assertThat(address, is(v12()));
+    assertThat(address, is(v13()));
+    assertThat(address, is(v14()));
+    assertThat(address, is(v15()));
   }
 
   @Test
   public void mapV14() {
-    AddressV1 address = v14();
+    AddressV1 address = createV14();
     mapper.map(address);
-    assertThat(address).isV10();
-    assertThat(address).isV11();
-    assertThat(address).isV12();
-    assertThat(address).isV13();
-    assertThat(address).isV14();
-    assertThat(address).isV15();
+    assertThat(address, is(v10()));
+    assertThat(address, is(v11()));
+    assertThat(address, is(v12()));
+    assertThat(address, is(v13()));
+    assertThat(address, is(v14()));
+    assertThat(address, is(v15()));
   }
 
   @Test
   public void mapV15() {
-    AddressV1 address = v15();
+    AddressV1 address = createV15();
     mapper.map(address);
-    assertThat(address).isV10();
-    assertThat(address).isV11();
-    assertThat(address).isV12();
-    assertThat(address).isV13();
-    assertThat(address).isV14();
-    assertThat(address).isV15();
+    assertThat(address, is(v10()));
+    assertThat(address, is(v11()));
+    assertThat(address, is(v12()));
+    assertThat(address, is(v13()));
+    assertThat(address, is(v14()));
+    assertThat(address, is(v15()));
   }
 
-  public AddressV1 v10() {
+  public AddressV1 createV10() {
     return new AddressV1() {{
       street = new StreetV1() {{
         name = "Samplestreet";
@@ -116,7 +119,7 @@ public class CompatibilityMapperTest {
     }};
   }
 
-  public AddressV1 v11() {
+  public AddressV1 createV11() {
     return new AddressV1() {{
       street = new StreetV1() {{
         streetName = "Samplestreet";
@@ -126,7 +129,7 @@ public class CompatibilityMapperTest {
     }};
   }
 
-  public AddressV1 v12() {
+  public AddressV1 createV12() {
     return new AddressV1() {{
       street = new StreetV1() {{
         streetName = "Samplestreet";
@@ -136,7 +139,7 @@ public class CompatibilityMapperTest {
     }};
   }
 
-  public AddressV1 v13() {
+  public AddressV1 createV13() {
     return new AddressV1() {{
       street = new StreetV1() {{
         addressLine1 = "Samplestreet 1";
@@ -146,7 +149,7 @@ public class CompatibilityMapperTest {
     }};
   }
 
-  public AddressV1 v14() {
+  public AddressV1 createV14() {
     return new AddressV1() {{
       addressLine1 = "Samplestreet 1";
       addressLine2 = "";
@@ -155,7 +158,7 @@ public class CompatibilityMapperTest {
     }};
   }
 
-  public AddressV1 v15() {
+  public AddressV1 createV15() {
     return new AddressV1() {{
       addressLine1 = "Samplestreet 1";
       addressLine2 = "";
@@ -166,62 +169,159 @@ public class CompatibilityMapperTest {
     }};
   }
 
-  public AddressMatcher assertThat(AddressV1 address) {
-    return new AddressMatcher(address);
+  private Matcher<AddressV1> v10() {
+    return allOf(
+        streetHasName("Samplestreet"),
+        streetHasNumber("1"),
+        hasCity("12345 Samplecity"));
   }
-  
-  private <T> void assertThat(T actual, Matcher<? super T> matcher) {
-    Assert.assertThat(actual, matcher);
+
+  private Matcher<AddressV1> v11() {
+    return allOf(
+        streetHasStreetName("Samplestreet"),
+        streetHasStreetNumber("1"),
+        hasCity("12345 Samplecity"));
   }
 
-  public static class AddressMatcher {
-    
-    private AddressV1 address;
-    
-    private AddressMatcher(AddressV1 address) {
-      this.address = address;
-    }
+  private Matcher<AddressV1> v12() {
+    return allOf(
+        streetHasStreetName("Samplestreet"),
+        streetHasHouseNumber("1"),
+        hasCity("12345 Samplecity"));
+  }
 
-    public void isV10() {
-      assertThat(address.getStreet().getName(), is("Samplestreet"));
-      assertThat(address.getStreet().getNumber(), is("1"));
-      assertThat(address.getCity(), is("12345 Samplecity"));
-    }
+  private Matcher<AddressV1> v13() {
+    return allOf(
+        streetHasAddressLine1("Samplestreet 1"),
+        streetHasAddressLine2(""),
+        hasCity("12345 Samplecity"));
+  }
 
-    public void isV11() {
-      assertThat(address.getStreet().getStreetName(), is("Samplestreet"));
-      assertThat(address.getStreet().getStreetNumber(), is("1"));
-      assertThat(address.getCity(), is("12345 Samplecity"));
-    }
+  private Matcher<AddressV1> v14() {
+    return allOf(
+        hasAddressLine1("Samplestreet 1"),
+        hasAddressLine2(""),
+        hasZipCode("12345"),
+        hasCityName("Samplecity"));
+  }
 
-    public void isV12() {
-      assertThat(address.getStreet().getStreetName(), is("Samplestreet"));
-      assertThat(address.getStreet().getHouseNumber(), is("1"));
-      assertThat(address.getCity(), is("12345 Samplecity"));
-    }
+  private Matcher<AddressV1> v15() {
+    return allOf(
+        hasAddressLine1("Samplestreet 1"),
+        hasAddressLine2(""),
+        locationHasZipCode("12345"),
+        locationHasCityName("Samplecity"));
+  }
 
-    public void isV13() {
-      assertThat(address.getStreet().getAddressLine1(), is("Samplestreet 1"));
-      assertThat(address.getStreet().getAddressLine2(), is(""));
-      assertThat(address.getCity(), is("12345 Samplecity"));
-    }
+  private Matcher<AddressV1> hasAddressLine1(String line) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(line)), "addressLine1", "addressLine1") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getAddressLine1();
+       }
+    };
+  }
 
-    public void isV14() {
-      assertThat(address.getAddressLine1(), is("Samplestreet 1"));
-      assertThat(address.getAddressLine2(), is(""));
-      assertThat(address.getZipCode(), is("12345"));
-      assertThat(address.getCityName(), is("Samplecity"));
-    }
+  private Matcher<AddressV1> hasAddressLine2(String line) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(line)), "addressLine2", "addressLine2") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getAddressLine2();
+       }
+    };
+  }
 
-    public void isV15() {
-      assertThat(address.getAddressLine1(), is("Samplestreet 1"));
-      assertThat(address.getAddressLine2(), is(""));
-      assertThat(address.getLocation().getZipCode(), is("12345"));
-      assertThat(address.getLocation().getCityName(), is("Samplecity"));
-    }
-    
-    private <T> void assertThat(T actual, Matcher<? super T> matcher) {
-      Assert.assertThat(actual, matcher);
-    }
+  private Matcher<AddressV1> hasCity(String city) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(city)), "city", "city") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getCity();
+       }
+    };
+  }
+
+  private Matcher<AddressV1> hasZipCode(String zipCode) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(zipCode)), "zipCode", "zipCode") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getZipCode();
+       }
+    };
+  }
+
+  private Matcher<AddressV1> hasCityName(String city) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(city)), "cityName", "cityName") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getCityName();
+       }
+    };
+  }
+
+  private Matcher<AddressV1> streetHasName(String name) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(name)), "street.name", "street.name") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getStreet().getName();
+       }
+    };
+  }
+
+  private Matcher<AddressV1> streetHasNumber(String number) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(number)), "street.number", "street.number") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getStreet().getNumber();
+       }
+    };
+  }
+
+  private Matcher<AddressV1> streetHasStreetName(String name) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(name)), "street.streetName", "street.streetName") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getStreet().getStreetName();
+       }
+    };
+  }
+
+  private Matcher<AddressV1> streetHasStreetNumber(String number) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(number)), "street.streetNumber", "street.streetNumber") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getStreet().getStreetNumber();
+       }
+    };
+  }
+
+  private Matcher<AddressV1> streetHasHouseNumber(String number) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(number)), "street.houseNumber", "street.houseNumber") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getStreet().getHouseNumber();
+       }
+    };
+  }
+
+  private Matcher<AddressV1> streetHasAddressLine1(String line) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(line)), "street.addressLine1", "street.addressLine1") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getStreet().getAddressLine1();
+       }
+    };
+  }
+
+  private Matcher<AddressV1> streetHasAddressLine2(String line) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(line)), "street.addressLine2", "street.addressLine2") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getStreet().getAddressLine2();
+       }
+    };
+  }
+
+  private Matcher<AddressV1> locationHasZipCode(String zipCode) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(zipCode)), "location.zipCode", "location.zipCode") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getLocation().getZipCode();
+       }
+    };
+  }
+
+  private Matcher<AddressV1> locationHasCityName(String cityName) {
+    return new FeatureMatcher<AddressV1, String>(is(equalTo(cityName)), "location.cityName", "location.cityName") {
+       protected String featureValueOf(AddressV1 actual) {
+          return actual.getLocation().getCityName();
+       }
+    };
   }
 }
