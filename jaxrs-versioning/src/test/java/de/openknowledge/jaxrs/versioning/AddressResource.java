@@ -12,6 +12,9 @@
  */
 package de.openknowledge.jaxrs.versioning;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -29,6 +32,24 @@ import de.openknowledge.jaxrs.versioning.model.LocationV2;
  */
 @Path("/{version}/addresses")
 public class AddressResource {
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  public List<AddressV2> getAddresses() {
+    return Arrays.asList(
+        new AddressV2(
+            "Samplestreet 1",
+            "",
+            new LocationV2(
+                "12345",
+                "Samplecity")),
+        new AddressV2(
+            "Samplestreet 2",
+            "",
+            new LocationV2(
+                "12345",
+                "Samplecity")));
+  }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)

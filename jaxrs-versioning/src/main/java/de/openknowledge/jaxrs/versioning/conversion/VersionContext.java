@@ -33,7 +33,7 @@ public class VersionContext {
   }
 
   private VersionContext(List<Object> stack) {
-    this.parents = stack.subList(0, stack.size());
+    this.parents = stack;
   }
 
   public Object getParent() {
@@ -45,9 +45,8 @@ public class VersionContext {
   }
 
   VersionContext getChildContext(Object base) {
-    List<Object> newParents = parents;
+    List<Object> newParents = new ArrayList<Object>(parents);
     newParents.add(base);
-    parents = newParents.subList(0, newParents.size() - 1);
     return new VersionContext(newParents);
   }
 }

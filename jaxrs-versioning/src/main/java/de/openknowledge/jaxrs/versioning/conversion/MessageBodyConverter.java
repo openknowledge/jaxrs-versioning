@@ -41,7 +41,7 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
   
   @Override
   public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {
-    if (context.getType() == String.class) {
+    if (!context.getType().isAnnotationPresent(SupportedVersion.class)) {
       return context.proceed();
     }
     String sourceVersion = getVersion();
@@ -59,13 +59,12 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
 
   @Override
   public void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException {
-    String targetVersion = getVersion();
-    Object source = context.getEntity();
-    if (source instanceof String) {
-      // may be an error text
+    if (!context.getType().isAnnotationPresent(SupportedVersion.class)) {
       context.proceed();
       return;
     }
+    String targetVersion = getVersion();
+    Object source = context.getEntity();
     mapper.map(source);
     Object target = converter.convertToLowerVersion(targetVersion, source);
     context.setEntity(target);

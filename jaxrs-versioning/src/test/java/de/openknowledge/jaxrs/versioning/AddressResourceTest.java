@@ -34,6 +34,7 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -64,6 +65,24 @@ public class AddressResourceTest {
         .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)
           .addDefaultNamespaces()
           .exportAsString()));
+  }
+
+  @Test
+  public void getAddressesV1(@ArquillianResource URL url) throws IOException {
+    JSONArray addresses = new JSONArray(IOUtils.toString(new URL(url, "v1/addresses").openStream()));
+    JSONObject address1 = addresses.getJSONObject(0);
+    JSONObject address2 = addresses.getJSONObject(1);
+    JSONObject location1 = address1.getJSONObject("location");
+    JSONObject location2 = address2.getJSONObject("location");
+    assertThat(addresses.length(), is(2));
+    assertThat(address1.getString("addressLine1"), is("Samplestreet 1"));
+    assertThat(address1.getString("addressLine2"), is(""));
+    assertThat(location1.getString("zipCode"), is("12345"));
+    assertThat(location1.getString("cityName"), is("Samplecity"));
+    assertThat(address2.getString("addressLine1"), is("Samplestreet 2"));
+    assertThat(address2.getString("addressLine2"), is(""));
+    assertThat(location2.getString("zipCode"), is("12345"));
+    assertThat(location2.getString("cityName"), is("Samplecity"));
   }
 
   @Ignore
