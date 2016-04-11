@@ -52,23 +52,29 @@ public class CompatibilityMapper {
       if (value == null) {
         if (movedFrom != null) {
           value = getPrevious(versionType, movedFrom, context);
-        } else if (added != null ) {
+        }
+        if (value == null && added != null) {
           value = getValue(versionProperty, added.defaultValue(), added.provider(), context);
-        } else {// if (removed != null)
+        }
+        if (value == null && removed != null) {
           value = getValue(versionProperty, removed.defaultValue(), removed.provider(), context);
         }
-        // TODO check if more than one annotation is set
         if (value != null) {
           versionProperty.set(object, value);
+          map(versionType, movedFrom, value, context);
         }
       } else {
-        if (movedFrom != null) {
-          setValue(versionType, movedFrom, value, context);
-        }
-        if (!isSimpleValue(versionProperty.getType())) {
-          map(value, context.getChildContext(value));
-        }
+        map(versionType, movedFrom, value, context);
       }
+    }
+  }
+
+  private void map(VersionType versionType, MovedFrom movedFrom, Object value, VersionContext context) {
+    if (movedFrom != null) {
+      setDependentValues(versionType, movedFrom, value, context);
+    }
+    if (!isSimpleValue(value.getClass())) {
+      map(value, context.getChildContext(value));
     }
   }
 
@@ -89,12 +95,12 @@ public class CompatibilityMapper {
     }
   }
 
-  private void setValue(VersionType versionType, MovedFrom movedFrom, Object value, VersionContext context) {
+  private void setDependentValues(VersionType versionType, MovedFrom movedFrom, Object value, VersionContext context) {
     VersionPropertyValue propertyValue = getPropertyValue(versionType, movedFrom, context);
     propertyValue.set(value);
     movedFrom = propertyValue.getAnnotation(MovedFrom.class);
     if (movedFrom != null) {
-      setValue(versionType, movedFrom, value, context);
+      setDependentValues(versionType, movedFrom, value, context);
     }
   }
 
