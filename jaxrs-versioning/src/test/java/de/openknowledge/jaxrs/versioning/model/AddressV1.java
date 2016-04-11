@@ -32,6 +32,7 @@ import de.openknowledge.jaxrs.versioning.SupportedVersion;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AddressV1 {
 
+  @Removed
   protected StreetV1 street;
 
   @Removed(provider = CityAggregationProvider.class)
