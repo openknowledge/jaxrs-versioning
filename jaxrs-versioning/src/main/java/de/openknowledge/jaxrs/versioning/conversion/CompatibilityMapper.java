@@ -100,6 +100,10 @@ public class CompatibilityMapper {
         if (dependentValue.get() == null) {
           updateDependentValues(dependentValue);
         }
+        if (dependentValue.get() == null) {
+          // we can't call the provider for now. Will be done later
+          return;
+        }
       }
       defaultValue = added.defaultValue();
       provider = added.provider();
@@ -140,11 +144,17 @@ public class CompatibilityMapper {
     setDependentValues(propertyParentType, movedFrom, added, value, propertyValue.getContext());
   }
 
-  private void setRemovedValues(VersionType versionType, String dependency, VersionContext context) {
-    VersionPropertyValue propertyValue = getPropertyValue(versionType, dependency, context);
+  private void setRemovedValues(VersionType versionType, String dependsOn, VersionContext context) {
+    VersionPropertyValue propertyValue = getPropertyValue(versionType, dependsOn, context);
     if (propertyValue.get() == null) {
       Removed removed = propertyValue.getAnnotation(Removed.class);
       if (removed != null) {
+        for (String dependency: removed.isDependencyOf()) {
+          if (getPropertyValue(versionType, dependency, context).get() == null) {
+            // we can't call the provider for now. Will be done later
+            return;
+          }
+        }
         setValue(propertyValue, removed.provider(), removed.defaultValue(), context);
         Object value = propertyValue.get();
         if (value != null) {

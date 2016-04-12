@@ -19,7 +19,6 @@ import static org.junit.Assert.assertThat;
 
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.openknowledge.jaxrs.versioning.model.AddressV1;
@@ -96,7 +95,6 @@ public class CompatibilityMapperTest {
     assertThat(address, is(v15()));
   }
 
-  @Ignore
   @Test
   public void mapV15() {
     AddressV1 address = createV15();

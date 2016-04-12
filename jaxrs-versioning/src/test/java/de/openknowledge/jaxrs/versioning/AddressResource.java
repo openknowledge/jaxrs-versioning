@@ -39,13 +39,13 @@ public class AddressResource {
     return Arrays.asList(
         new AddressV2(
             "Samplestreet 1",
-            "",
+            " ",
             new LocationV2(
                 "12345",
                 "Samplecity")),
         new AddressV2(
             "Samplestreet 2",
-            "",
+            " ",
             new LocationV2(
                 "12345",
                 "Samplecity")));
@@ -57,7 +57,7 @@ public class AddressResource {
   public AddressV2 getAddress(@PathParam("id") int id) {
     return new AddressV2(
         "Samplestreet 1",
-        "",
+        " ",
         new LocationV2(
             "12345",
             "Samplecity"));
@@ -71,7 +71,7 @@ public class AddressResource {
     if (!address.getAddressLine1().equals("Samplestreet 1")) {
       throw new IllegalArgumentException("wrong address line 1");
     }
-    if (!address.getAddressLine2().equals("")) {
+    if (!address.getAddressLine2().equals(" ")) {
       throw new IllegalArgumentException("wrong address line 2");
     }
     if (!address.getLocation().getZipCode().equals("12345")) {

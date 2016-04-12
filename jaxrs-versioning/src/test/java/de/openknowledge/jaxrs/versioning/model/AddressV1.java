@@ -35,7 +35,7 @@ public class AddressV1 {
   @Removed
   protected StreetV1 street;
 
-  @Removed(provider = CityAggregationProvider.class)
+  @Removed(provider = CityAggregationProvider.class, isDependencyOf = {"zipCode", "cityName"})
   protected String city;
   
   @Added(provider = ZipCodeProvider.class, dependsOn = "city")

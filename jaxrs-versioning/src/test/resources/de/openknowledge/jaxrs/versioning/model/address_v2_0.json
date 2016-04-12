@@ -1,6 +1,6 @@
 {
     "addressLine1": "Samplestreet 1",
-    "addressLine2": "",
+    "addressLine2": " ",
     "location": {
         "zipCode": "12345",
         "cityName": "Samplecity"

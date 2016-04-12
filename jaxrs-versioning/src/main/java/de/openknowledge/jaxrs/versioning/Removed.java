@@ -26,4 +26,5 @@ import java.lang.annotation.Target;
 public @interface Removed {
   Class<? extends Provider> provider() default Provider.class;
   String defaultValue() default "";
+  String[] isDependencyOf() default {};
 }
