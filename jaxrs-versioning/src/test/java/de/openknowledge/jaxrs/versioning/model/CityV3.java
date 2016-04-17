@@ -10,20 +10,31 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package de.openknowledge.jaxrs.versioning.conversion;
-
-import java.lang.annotation.Annotation;
+package de.openknowledge.jaxrs.versioning.model;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
-public interface VersionProperty {
+public class CityV3 {
 
-  String getName();
-  Object get(Object base);
-  void set(Object base, Object value);
-  <A extends Annotation> A getAnnotation(Class<A> type);
-  Class<?> getType();
-  boolean isSimple();
+  private String zipCode;
+
+  private String cityName;
+
+  protected CityV3() {
+  }
+
+  public CityV3(String zipCode, String cityName) {
+    this.zipCode = zipCode;
+    this.cityName = cityName;
+  }
+
+  public String getZipCode() {
+    return zipCode;
+  }
+
+  public String getCityName() {
+    return cityName;
+  }
 }

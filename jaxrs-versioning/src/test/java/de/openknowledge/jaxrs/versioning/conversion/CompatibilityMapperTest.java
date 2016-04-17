@@ -19,9 +19,12 @@ import static org.junit.Assert.assertThat;
 
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.openknowledge.jaxrs.versioning.model.AddressV1;
+import de.openknowledge.jaxrs.versioning.model.AddressV2;
+import de.openknowledge.jaxrs.versioning.model.CityV2;
 import de.openknowledge.jaxrs.versioning.model.LocationV1;
 import de.openknowledge.jaxrs.versioning.model.StreetV1;
 
@@ -107,6 +110,30 @@ public class CompatibilityMapperTest {
     assertThat(address, is(v15()));
   }
 
+  @Test
+  public void mapV20() {
+    AddressV2 address = createV20();
+    mapper.map(address);
+    assertThat(address.getAddressLine1(), is("Samplestreet 1"));
+    assertThat(address.getAddressLine2(), is(" "));
+    assertThat(address.getLocation().getZipCode(), is("12345"));
+    assertThat(address.getLocation().getCityName(), is("Samplecity"));
+    assertThat(address.getCity().getZipCode(), is("12345"));
+    assertThat(address.getCity().getCityName(), is("Samplecity"));
+  }
+
+  @Test
+  public void mapV21() {
+    AddressV2 address = createV21();
+    mapper.map(address);
+    assertThat(address.getAddressLine1(), is("Samplestreet 1"));
+    assertThat(address.getAddressLine2(), is(" "));
+    assertThat(address.getLocation().getZipCode(), is("12345"));
+    assertThat(address.getLocation().getCityName(), is("Samplecity"));
+    assertThat(address.getCity().getZipCode(), is("12345"));
+    assertThat(address.getCity().getCityName(), is("Samplecity"));
+  }
+
   public AddressV1 createV10() {
     return new AddressV1() {{
       street = new StreetV1() {{
@@ -161,6 +188,28 @@ public class CompatibilityMapperTest {
       addressLine1 = "Samplestreet 1";
       addressLine2 = " ";
       location = new LocationV1() {{
+        zipCode = "12345";
+        cityName = "Samplecity";
+      }};
+    }};
+  }
+
+  public AddressV2 createV20() {
+    return new AddressV2() {{
+      addressLine1 = "Samplestreet 1";
+      addressLine2 = " ";
+      location = new CityV2() {{
+        zipCode = "12345";
+        cityName = "Samplecity";
+      }};
+    }};
+  }
+
+  public AddressV2 createV21() {
+    return new AddressV2() {{
+      addressLine1 = "Samplestreet 1";
+      addressLine2 = " ";
+      city = new CityV2() {{
         zipCode = "12345";
         cityName = "Samplecity";
       }};

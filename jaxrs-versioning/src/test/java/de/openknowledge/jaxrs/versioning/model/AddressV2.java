@@ -12,6 +12,7 @@
  */
 package de.openknowledge.jaxrs.versioning.model;
 
+import de.openknowledge.jaxrs.versioning.MovedFrom;
 import de.openknowledge.jaxrs.versioning.SupportedVersion;
 
 /**
@@ -21,16 +22,19 @@ import de.openknowledge.jaxrs.versioning.SupportedVersion;
 @SupportedVersion(version = "v2", previous = AddressV1.class)
 public class AddressV2 {
 
-    private String addressLine1;
+    protected String addressLine1;
 
-    private String addressLine2;
+    protected String addressLine2;
 
-    private LocationV2 location;
+    protected CityV2 location;
+    
+    @MovedFrom("location")
+    protected CityV2 city;
 
     protected AddressV2() {
     }
 
-    public AddressV2(String adressLine1, String adressLine2, LocationV2 location) {
+    public AddressV2(String adressLine1, String adressLine2, CityV2 location) {
         this.addressLine1 = adressLine1;
         this.addressLine2 = adressLine2;
         this.location = location;
@@ -44,7 +48,11 @@ public class AddressV2 {
         return addressLine2;
     }
 
-    public LocationV2 getLocation() {
+    public CityV2 getLocation() {
       return location;
+    }
+
+    public CityV2 getCity() {
+      return city;
     }
 }

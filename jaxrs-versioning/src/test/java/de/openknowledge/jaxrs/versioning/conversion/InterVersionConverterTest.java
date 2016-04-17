@@ -19,8 +19,8 @@ import org.junit.Test;
 
 import de.openknowledge.jaxrs.versioning.model.AddressV1;
 import de.openknowledge.jaxrs.versioning.model.AddressV2;
+import de.openknowledge.jaxrs.versioning.model.CityV2;
 import de.openknowledge.jaxrs.versioning.model.LocationV1;
-import de.openknowledge.jaxrs.versioning.model.LocationV2;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
@@ -34,7 +34,7 @@ public class InterVersionConverterTest {
 
   @Test
   public void convertToLowerVersion() {
-    AddressV1 address = (AddressV1)converter.convertToLowerVersion("v1", new AddressV2("Samplestreet 1", "", new LocationV2("12345", "Samplecity")));
+    AddressV1 address = (AddressV1)converter.convertToLowerVersion("v1", new AddressV2("Samplestreet 1", "", new CityV2("12345", "Samplecity")));
     assertThat(address.getAddressLine1(), is("Samplestreet 1"));
     assertThat(address.getAddressLine2(), is(""));
     assertThat(address.getZipCode(), is("12345"));

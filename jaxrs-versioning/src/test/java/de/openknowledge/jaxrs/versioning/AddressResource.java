@@ -24,7 +24,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import de.openknowledge.jaxrs.versioning.model.AddressV2;
-import de.openknowledge.jaxrs.versioning.model.LocationV2;
+import de.openknowledge.jaxrs.versioning.model.CityV2;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
@@ -40,13 +40,13 @@ public class AddressResource {
         new AddressV2(
             "Samplestreet 1",
             " ",
-            new LocationV2(
+            new CityV2(
                 "12345",
                 "Samplecity")),
         new AddressV2(
             "Samplestreet 2",
             " ",
-            new LocationV2(
+            new CityV2(
                 "12345",
                 "Samplecity")));
   }
@@ -58,7 +58,7 @@ public class AddressResource {
     return new AddressV2(
         "Samplestreet 1",
         " ",
-        new LocationV2(
+        new CityV2(
             "12345",
             "Samplecity"));
   }

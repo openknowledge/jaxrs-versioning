@@ -12,29 +12,39 @@
  */
 package de.openknowledge.jaxrs.versioning.model;
 
+import de.openknowledge.jaxrs.versioning.SupportedVersion;
+
 /**
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
-public class LocationV2 {
+@SupportedVersion(version = "v3", previous = AddressV2.class)
+public class AddressV3 {
 
-  private String zipCode;
+    private String addressLine1;
 
-  private String cityName;
+    private String addressLine2;
 
-  protected LocationV2() {
-  }
+    private CityV3 city;
 
-  public LocationV2(String zipCode, String cityName) {
-    this.zipCode = zipCode;
-    this.cityName = cityName;
-  }
+    protected AddressV3() {
+    }
 
-  public String getZipCode() {
-    return zipCode;
-  }
+    public AddressV3(String adressLine1, String adressLine2, CityV3 location) {
+        this.addressLine1 = adressLine1;
+        this.addressLine2 = adressLine2;
+        this.city = location;
+    }
 
-  public String getCityName() {
-    return cityName;
-  }
+    public String getAddressLine1() {
+        return addressLine1;
+    }
+
+    public String getAddressLine2() {
+        return addressLine2;
+    }
+
+    public CityV3 getCity() {
+      return city;
+    }
 }

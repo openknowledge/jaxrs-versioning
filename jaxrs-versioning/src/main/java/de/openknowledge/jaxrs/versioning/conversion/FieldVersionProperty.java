@@ -16,6 +16,9 @@ import static org.apache.commons.lang3.Validate.notNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.sql.Date;
+
+import org.apache.commons.lang3.ClassUtils;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
@@ -41,6 +44,11 @@ public class FieldVersionProperty implements VersionProperty {
   @Override
   public Class<?> getType() {
     return type;
+  }
+
+  @Override
+  public boolean isSimple() {
+    return type == String.class || type == Date.class || ClassUtils.isPrimitiveOrWrapper(type);
   }
 
   @Override

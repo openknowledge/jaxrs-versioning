@@ -12,6 +12,12 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import de.openknowledge.jaxrs.versioning.SupportedVersion;
 
 /**
@@ -54,6 +60,7 @@ public class InterVersionConverter {
       throw new IllegalArgumentException("unsupported version: " + sourceVersion);
     }
     if (supportedVersion.version().equals(sourceVersion)) {
+      mapper.map(source);
       return source;
     }
     Object previousVersion = convertToHigherVersion(supportedVersion.previous(), source, sourceVersion);
@@ -62,20 +69,57 @@ public class InterVersionConverter {
 
   private Object map(Object previous, Class<?> targetType, VersionContext context) {
     VersionType targetVersionType = factory.get(targetType);
-    Object target = targetVersionType.newInstance();
-    context = context.getChildContext(target);
+    Object target = null;
     VersionType previousVersionType = factory.get(previous.getClass());
-    for (VersionProperty property: targetVersionType.getProperties()) {
-      VersionProperty previousProperty = previousVersionType.getProperty(property.getName());
-      if (previousProperty != null) {
-        if (property.getType().equals(previousProperty.getType())) {
-          property.set(target, previousProperty.get(previous));
+    for (VersionProperty targetProperty: targetVersionType.getProperties()) {
+      VersionProperty previousProperty = previousVersionType.getProperty(targetProperty.getName());
+      if (match(targetProperty, previousProperty)) {
+        if (target == null) {
+          target = targetVersionType.newInstance();
+          context = context.getChildContext(target);
+        }
+        if ((targetProperty.isSimple() && previousProperty.isSimple())
+            || targetProperty.getType().isAssignableFrom(previousProperty.getType())) {
+          targetProperty.set(target, previousProperty.get(previous));
         } else {
-          property.set(target, map(previousProperty.get(previous), property.getType(), context));
+          targetProperty.set(target, map(previousProperty.get(previous), targetProperty.getType(), context));
         }
       }
     }
-    mapper.map(target, context);
+    if (target != null) {
+      mapper.map(target, context);
+    }
     return target;
+  }
+
+  private boolean match(VersionProperty property, VersionProperty previousProperty) {
+    return match(property, previousProperty, new HashSet<Pair<VersionType,VersionType>>());
+  }
+
+  private boolean match(VersionProperty property, VersionProperty previousProperty, Set<Pair<VersionType, VersionType>> visited) {
+    if (previousProperty == null) {
+      return false;
+    }
+    if (property.isSimple() && previousProperty.isSimple()) {
+      return true;
+    }
+    if (property.isSimple() || previousProperty.isSimple()) {
+      return false;
+    }
+    return match(factory.get(property.getType()), factory.get(previousProperty.getType()), visited);
+  }
+
+  private boolean match(VersionType versionType, VersionType previousVersionType, Set<Pair<VersionType, VersionType>> visited) {
+    ImmutablePair<VersionType, VersionType> pair = ImmutablePair.of(versionType, previousVersionType);
+    if (visited.contains(pair)) {
+      return true;
+    }
+    visited.add(pair);
+    for (VersionProperty property: versionType.getProperties()) {
+      if (match(property, previousVersionType.getProperty(property.getName()), visited)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

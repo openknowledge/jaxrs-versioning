@@ -46,7 +46,7 @@ public class CompatibilityMapper {
       Added added = versionProperty.getAnnotation(Added.class);
 
       if (movedFrom == null && added == null) {
-        if (!isSimpleValue(versionProperty.getType())) {
+        if (!versionProperty.isSimple()) {
           Object value = versionProperty.get(object);
           if (value == null) {
             value = versionTypeFactory.get(versionProperty.getType()).newInstance();
@@ -61,7 +61,7 @@ public class CompatibilityMapper {
         updateDependentValues(new VersionPropertyValue(versionProperty, context));
       } else {
         setDependentValues(versionType, movedFrom, added, value, context);
-        if (!isSimpleValue(value.getClass())) {
+        if (!versionProperty.isSimple()) {
           map(value, context.getChildContext(value));
         }
       }
@@ -117,7 +117,7 @@ public class CompatibilityMapper {
       value.set(providerInstance.get(context));
     } else if (!defaultValue.isEmpty()) {
       value.set(defaultValue);
-    } else if (!isSimpleValue(value.getProperty().getType())) {
+    } else if (!value.getProperty().isSimple()) {
       Object instance = versionTypeFactory.get(value.getProperty().getType()).newInstance();
       value.set(instance);
       map(instance, context.getChildContext(instance));
@@ -188,9 +188,5 @@ public class CompatibilityMapper {
     }
     return getPropertyValue(versionTypeFactory.get(property.getType()), pathElements, index + 1,
         context.getChildContext(value));
-  }
-
-  private boolean isSimpleValue(Class<?> type) {
-    return type == String.class || type == Date.class || ClassUtils.isPrimitiveOrWrapper(type);
   }
 }
