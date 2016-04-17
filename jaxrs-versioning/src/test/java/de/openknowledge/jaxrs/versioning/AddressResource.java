@@ -24,6 +24,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import de.openknowledge.jaxrs.versioning.model.AddressV2;
+import de.openknowledge.jaxrs.versioning.model.AddressV3;
 import de.openknowledge.jaxrs.versioning.model.CityV2;
 
 /**
@@ -67,17 +68,17 @@ public class AddressResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  public AddressV2 createAddress(AddressV2 address) {
+  public AddressV3 createAddress(AddressV3 address) {
     if (!address.getAddressLine1().equals("Samplestreet 1")) {
       throw new IllegalArgumentException("wrong address line 1");
     }
     if (!address.getAddressLine2().equals(" ")) {
       throw new IllegalArgumentException("wrong address line 2");
     }
-    if (!address.getLocation().getZipCode().equals("12345")) {
+    if (!address.getCity().getZipCode().equals("12345")) {
       throw new IllegalArgumentException("wrong zip code");
     }
-    if (!address.getLocation().getCityName().equals("Samplecity")) {
+    if (!address.getCity().getCityName().equals("Samplecity")) {
       throw new IllegalArgumentException("wrong zip code");
     }
     return address;
