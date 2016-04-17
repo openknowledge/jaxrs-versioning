@@ -19,10 +19,10 @@ import java.util.Collection;
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
-public interface VersionType {
+public interface VersionType<T> {
   
   Collection<VersionProperty> getProperties();
   VersionProperty getProperty(String name);
   <A extends Annotation> A getAnnotation(Class<A> class1);
-  Object newInstance();
+  T newInstance();
 }

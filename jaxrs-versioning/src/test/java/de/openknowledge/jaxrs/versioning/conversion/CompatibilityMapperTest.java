@@ -14,8 +14,11 @@ package de.openknowledge.jaxrs.versioning.conversion;
 
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
 
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
@@ -24,7 +27,9 @@ import org.junit.Test;
 
 import de.openknowledge.jaxrs.versioning.model.AddressV1;
 import de.openknowledge.jaxrs.versioning.model.AddressV2;
+import de.openknowledge.jaxrs.versioning.model.AddressV3;
 import de.openknowledge.jaxrs.versioning.model.CityV2;
+import de.openknowledge.jaxrs.versioning.model.CityV3;
 import de.openknowledge.jaxrs.versioning.model.LocationV1;
 import de.openknowledge.jaxrs.versioning.model.StreetV1;
 
@@ -116,6 +121,7 @@ public class CompatibilityMapperTest {
     mapper.map(address);
     assertThat(address.getAddressLine1(), is("Samplestreet 1"));
     assertThat(address.getAddressLine2(), is(" "));
+    assertThat(address.getAddressLines(), hasItems("Samplestreet 1", " "));
     assertThat(address.getLocation().getZipCode(), is("12345"));
     assertThat(address.getLocation().getCityName(), is("Samplecity"));
     assertThat(address.getCity().getZipCode(), is("12345"));
@@ -128,8 +134,30 @@ public class CompatibilityMapperTest {
     mapper.map(address);
     assertThat(address.getAddressLine1(), is("Samplestreet 1"));
     assertThat(address.getAddressLine2(), is(" "));
+    assertThat(address.getAddressLines(), hasItems("Samplestreet 1", " "));
     assertThat(address.getLocation().getZipCode(), is("12345"));
     assertThat(address.getLocation().getCityName(), is("Samplecity"));
+    assertThat(address.getCity().getZipCode(), is("12345"));
+    assertThat(address.getCity().getCityName(), is("Samplecity"));
+  }
+
+  @Test
+  public void mapV30() {
+    AddressV3 address = createV30();
+    mapper.map(address);
+    assertThat(address.getAddressLine1(), is("Samplestreet 1"));
+    assertThat(address.getAddressLine2(), is(" "));
+    assertThat(address.getCity().getZipCode(), is("12345"));
+    assertThat(address.getCity().getCityName(), is("Samplecity"));
+  }
+
+  @Test
+  public void mapV31() {
+    AddressV3 address = createV31();
+    mapper.map(address);
+    assertThat(address.getAddressLines().size(), is(2));
+    assertThat(address.getAddressLines().get(0), is("Samplestreet 1"));
+    assertThat(address.getAddressLines().get(1), is(" "));
     assertThat(address.getCity().getZipCode(), is("12345"));
     assertThat(address.getCity().getCityName(), is("Samplecity"));
   }
@@ -207,9 +235,29 @@ public class CompatibilityMapperTest {
 
   public AddressV2 createV21() {
     return new AddressV2() {{
+      addressLines = Arrays.asList("Samplestreet 1", " ");
+      city = new CityV2() {{
+        zipCode = "12345";
+        cityName = "Samplecity";
+      }};
+    }};
+  }
+
+  public AddressV3 createV30() {
+    return new AddressV3() {{
+      addressLines = Arrays.asList("Samplestreet 1", " ");
+      city = new CityV3() {{
+        zipCode = "12345";
+        cityName = "Samplecity";
+      }};
+    }};
+  }
+
+  public AddressV3 createV31() {
+    return new AddressV3() {{
       addressLine1 = "Samplestreet 1";
       addressLine2 = " ";
-      city = new CityV2() {{
+      city = new CityV3() {{
         zipCode = "12345";
         cityName = "Samplecity";
       }};

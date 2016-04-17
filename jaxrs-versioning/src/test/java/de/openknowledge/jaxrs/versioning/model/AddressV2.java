@@ -12,6 +12,10 @@
  */
 package de.openknowledge.jaxrs.versioning.model;
 
+import java.util.Arrays;
+import java.util.List;
+
+import de.openknowledge.jaxrs.versioning.Added;
 import de.openknowledge.jaxrs.versioning.MovedFrom;
 import de.openknowledge.jaxrs.versioning.SupportedVersion;
 
@@ -22,37 +26,52 @@ import de.openknowledge.jaxrs.versioning.SupportedVersion;
 @SupportedVersion(version = "v2", previous = AddressV1.class)
 public class AddressV2 {
 
-    protected String addressLine1;
+  protected String addressLine1;
 
-    protected String addressLine2;
+  protected String addressLine2;
 
-    protected CityV2 location;
-    
-    @MovedFrom("location")
-    protected CityV2 city;
+  @Added({
+      @MovedFrom("addressLine1"),
+      @MovedFrom("addressLine2")
+  })
+  protected List<String> addressLines;
 
-    protected AddressV2() {
-    }
+  protected CityV2 location;
 
-    public AddressV2(String adressLine1, String adressLine2, CityV2 location) {
-        this.addressLine1 = adressLine1;
-        this.addressLine2 = adressLine2;
-        this.location = location;
-    }
+  @MovedFrom("location")
+  protected CityV2 city;
 
-    public String getAddressLine1() {
-        return addressLine1;
-    }
+  protected AddressV2() {
+  }
 
-    public String getAddressLine2() {
-        return addressLine2;
-    }
+  public AddressV2(String adressLine1, String adressLine2, CityV2 location) {
+    this.addressLine1 = adressLine1;
+    this.addressLine2 = adressLine2;
+    this.location = location;
+  }
 
-    public CityV2 getLocation() {
-      return location;
-    }
+  public AddressV2(CityV2 location, String... addressLines) {
+    this.addressLines = Arrays.asList(addressLines);
+    this.city = location;
+  }
 
-    public CityV2 getCity() {
-      return city;
-    }
+  public String getAddressLine1() {
+    return addressLine1;
+  }
+
+  public String getAddressLine2() {
+    return addressLine2;
+  }
+  
+  public List<String> getAddressLines() {
+    return addressLines;
+  }
+
+  public CityV2 getLocation() {
+    return location;
+  }
+
+  public CityV2 getCity() {
+    return city;
+  }
 }

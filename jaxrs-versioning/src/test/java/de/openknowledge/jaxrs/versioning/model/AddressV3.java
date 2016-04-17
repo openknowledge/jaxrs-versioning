@@ -12,6 +12,10 @@
  */
 package de.openknowledge.jaxrs.versioning.model;
 
+import java.util.Arrays;
+import java.util.List;
+
+import de.openknowledge.jaxrs.versioning.MovedFrom;
 import de.openknowledge.jaxrs.versioning.SupportedVersion;
 
 /**
@@ -21,30 +25,43 @@ import de.openknowledge.jaxrs.versioning.SupportedVersion;
 @SupportedVersion(version = "v3", previous = AddressV2.class)
 public class AddressV3 {
 
-    private String addressLine1;
+  protected List<String> addressLines;
 
-    private String addressLine2;
+  @MovedFrom("addressLines[0]")
+  protected String addressLine1;
 
-    private CityV3 city;
+  @MovedFrom("addressLines[1]")
+  protected String addressLine2;
 
-    protected AddressV3() {
-    }
+  protected CityV3 city;
 
-    public AddressV3(String adressLine1, String adressLine2, CityV3 location) {
-        this.addressLine1 = adressLine1;
-        this.addressLine2 = adressLine2;
-        this.city = location;
-    }
+  protected AddressV3() {
+  }
 
-    public String getAddressLine1() {
-        return addressLine1;
-    }
+  public AddressV3(String adressLine1, String adressLine2, CityV3 location) {
+    this.addressLine1 = adressLine1;
+    this.addressLine2 = adressLine2;
+    this.city = location;
+  }
 
-    public String getAddressLine2() {
-        return addressLine2;
-    }
+  public AddressV3(CityV3 location, String... addressLines) {
+    this.addressLines = Arrays.asList(addressLines);
+    this.city = location;
+  }
 
-    public CityV3 getCity() {
-      return city;
-    }
+  public String getAddressLine1() {
+    return addressLine1;
+  }
+
+  public String getAddressLine2() {
+    return addressLine2;
+  }
+
+  public List<String> getAddressLines() {
+    return addressLines;
+  }
+
+  public CityV3 getCity() {
+    return city;
+  }
 }

@@ -25,5 +25,8 @@ public interface VersionProperty {
   void set(Object base, Object value);
   <A extends Annotation> A getAnnotation(Class<A> type);
   Class<?> getType();
+  Class<?> getCollectionElementType();
   boolean isSimple();
+  boolean isCollection();
+  boolean isCollectionOfSimpleTypes();
 }

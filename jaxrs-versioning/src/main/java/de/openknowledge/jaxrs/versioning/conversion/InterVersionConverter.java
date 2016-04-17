@@ -12,7 +12,9 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -39,7 +41,7 @@ public class InterVersionConverter {
     if (sourceType == Object.class) {
       throw new IllegalArgumentException("unsupported version: " + targetVersion);
     }
-    VersionType versionType = factory.get(sourceType);
+    VersionType<?> versionType = factory.get(sourceType);
     SupportedVersion supportedVersion = versionType.getAnnotation(SupportedVersion.class);
     if (supportedVersion == null) {
       throw new IllegalArgumentException("unsupported version: " + targetVersion + sourceType.getName());
@@ -50,27 +52,27 @@ public class InterVersionConverter {
     return convertToLowerVersion(targetVersion, map(source, supportedVersion.previous(), new VersionContext()));
   }
 
-  public Object convertToHigherVersion(Class<?> targetType, Object source, String sourceVersion) {
+  public <T> T convertToHigherVersion(Class<T> targetType, Object source, String sourceVersion) {
     if (targetType == Object.class) {
       throw new IllegalArgumentException("unsupported version: " + sourceVersion);
     }
-    VersionType versionType = factory.get(targetType);
+    VersionType<?> versionType = factory.get(targetType);
     SupportedVersion supportedVersion = versionType.getAnnotation(SupportedVersion.class);
     if (supportedVersion == null) {
       throw new IllegalArgumentException("unsupported version: " + sourceVersion);
     }
     if (supportedVersion.version().equals(sourceVersion)) {
       mapper.map(source);
-      return source;
+      return targetType.cast(source);
     }
     Object previousVersion = convertToHigherVersion(supportedVersion.previous(), source, sourceVersion);
     return map(previousVersion, targetType, new VersionContext());
   }
 
-  private Object map(Object previous, Class<?> targetType, VersionContext context) {
-    VersionType targetVersionType = factory.get(targetType);
-    Object target = null;
-    VersionType previousVersionType = factory.get(previous.getClass());
+  private <T> T map(Object previous, Class<T> targetType, VersionContext context) {
+    VersionType<T> targetVersionType = factory.get(targetType);
+    T target = null;
+    VersionType<?> previousVersionType = factory.get(previous.getClass());
     for (VersionProperty targetProperty: targetVersionType.getProperties()) {
       VersionProperty previousProperty = previousVersionType.getProperty(targetProperty.getName());
       if (match(targetProperty, previousProperty)) {
@@ -78,8 +80,21 @@ public class InterVersionConverter {
           target = targetVersionType.newInstance();
           context = context.getChildContext(target);
         }
-        if ((targetProperty.isSimple() && previousProperty.isSimple())
-            || targetProperty.getType().isAssignableFrom(previousProperty.getType())) {
+        if (targetProperty.isCollection()) {
+          Collection<?> collection = (Collection<?>)previousProperty.get(previous);
+          if (collection == null) {
+            continue;
+          }
+          Iterator<?> source = collection.iterator();
+          for (int i = 0; source.hasNext(); i++) {
+            if (targetProperty.isCollectionOfSimpleTypes()
+                || targetProperty.getCollectionElementType().isAssignableFrom(previousProperty.getCollectionElementType())) {
+              new CollectionElementValue(targetProperty, i, context).set(source.next());
+            } else {
+              new CollectionElementValue(targetProperty, i, context).set(map(source.next(), targetProperty.getCollectionElementType(), context));
+            }
+          }
+        } else if (targetProperty.isSimple() || targetProperty.getType().isAssignableFrom(previousProperty.getType())) {
           targetProperty.set(target, previousProperty.get(previous));
         } else {
           targetProperty.set(target, map(previousProperty.get(previous), targetProperty.getType(), context));
@@ -93,10 +108,10 @@ public class InterVersionConverter {
   }
 
   private boolean match(VersionProperty property, VersionProperty previousProperty) {
-    return match(property, previousProperty, new HashSet<Pair<VersionType,VersionType>>());
+    return match(property, previousProperty, new HashSet<Pair<VersionType<?>, VersionType<?>>>());
   }
 
-  private boolean match(VersionProperty property, VersionProperty previousProperty, Set<Pair<VersionType, VersionType>> visited) {
+  private boolean match(VersionProperty property, VersionProperty previousProperty, Set<Pair<VersionType<?>, VersionType<?>>> visited) {
     if (previousProperty == null) {
       return false;
     }
@@ -106,15 +121,24 @@ public class InterVersionConverter {
     if (property.isSimple() || previousProperty.isSimple()) {
       return false;
     }
+    if (property.isCollectionOfSimpleTypes() && previousProperty.isCollectionOfSimpleTypes()) {
+      return true;
+    }
+    if (property.isCollection() && previousProperty.isCollection()) {
+      return match(factory.get(property.getCollectionElementType()), factory.get(previousProperty.getCollectionElementType()), visited);
+    }
+    if (property.isCollection() || previousProperty.isCollection()) {
+      return false;
+    }
     return match(factory.get(property.getType()), factory.get(previousProperty.getType()), visited);
   }
 
-  private boolean match(VersionType versionType, VersionType previousVersionType, Set<Pair<VersionType, VersionType>> visited) {
-    ImmutablePair<VersionType, VersionType> pair = ImmutablePair.of(versionType, previousVersionType);
+  private boolean match(VersionType<?> versionType, VersionType<?> previousVersionType, Set<Pair<VersionType<?>, VersionType<?>>> visited) {
+    ImmutablePair<?, ?> pair = ImmutablePair.of(versionType, previousVersionType);
     if (visited.contains(pair)) {
       return true;
     }
-    visited.add(pair);
+    visited.add((Pair<VersionType<?>, VersionType<?>>)pair);
     for (VersionProperty property: versionType.getProperties()) {
       if (match(property, previousVersionType.getProperty(property.getName()), visited)) {
         return true;

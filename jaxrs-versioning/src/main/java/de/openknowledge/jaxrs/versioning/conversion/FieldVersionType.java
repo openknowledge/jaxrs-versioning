@@ -24,16 +24,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
-public class FieldVersionType implements VersionType {
+public class FieldVersionType<T> implements VersionType<T> {
 
-  private Class<?> type;
+  private Class<T> type;
   private Map<String, VersionProperty> fields;
   
-  public FieldVersionType(Class<?> type, VersionTypeFactory factory) {
+  public FieldVersionType(Class<T> type, VersionTypeFactory factory) {
     this.type = type;
     ConcurrentHashMap<String, VersionProperty> fields = new ConcurrentHashMap<String, VersionProperty>();
     if (type.getSuperclass() != Object.class) {
-      FieldVersionType parent = (FieldVersionType)factory.get(type.getSuperclass());
+      FieldVersionType<?> parent = (FieldVersionType<?>)factory.get(type.getSuperclass());
       fields.putAll(parent.fields);
     }
     for (Field field: type.getDeclaredFields()) {
@@ -63,9 +63,9 @@ public class FieldVersionType implements VersionType {
   }
 
   @Override
-  public Object newInstance() {
+  public T newInstance() {
     try {
-      Constructor<?> constructor = type.getDeclaredConstructor();
+      Constructor<T> constructor = type.getDeclaredConstructor();
       constructor.setAccessible(true);
       return constructor.newInstance();
     } catch (ReflectiveOperationException e) {

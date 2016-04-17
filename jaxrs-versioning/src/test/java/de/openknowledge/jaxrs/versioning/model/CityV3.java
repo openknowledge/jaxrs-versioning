@@ -18,9 +18,9 @@ package de.openknowledge.jaxrs.versioning.model;
  */
 public class CityV3 {
 
-  private String zipCode;
+  protected String zipCode;
 
-  private String cityName;
+  protected String cityName;
 
   protected CityV3() {
   }

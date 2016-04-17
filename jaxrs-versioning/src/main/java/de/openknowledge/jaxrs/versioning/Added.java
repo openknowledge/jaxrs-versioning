@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD})
 public @interface Added {
+  MovedFrom[] value() default {};
   Class<? extends Provider> provider() default Provider.class;
   String defaultValue() default "";
   String[] dependsOn() default {};

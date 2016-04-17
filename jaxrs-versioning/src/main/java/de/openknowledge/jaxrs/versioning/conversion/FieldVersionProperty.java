@@ -15,10 +15,15 @@ package de.openknowledge.jaxrs.versioning.conversion;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.sql.Date;
+import java.util.Collection;
 
 import org.apache.commons.lang3.ClassUtils;
+
+import de.openknowledge.jaxrs.versioning.Removed;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
@@ -47,8 +52,25 @@ public class FieldVersionProperty implements VersionProperty {
   }
 
   @Override
+  public Class<?> getCollectionElementType() {
+    // TODO improve generics resolution
+    ParameterizedType type = (ParameterizedType)field.getGenericType();
+    return (Class<?>)type.getActualTypeArguments()[0];
+  }
+
+  @Override
   public boolean isSimple() {
-    return type == String.class || type == Date.class || ClassUtils.isPrimitiveOrWrapper(type);
+    return isSimple(type);
+  }
+
+  @Override
+  public boolean isCollection() {
+    return Collection.class.isAssignableFrom(type);
+  }
+
+  @Override
+  public boolean isCollectionOfSimpleTypes() {
+    return isCollection() && isSimple(getCollectionElementType());
   }
 
   @Override
@@ -76,5 +98,9 @@ public class FieldVersionProperty implements VersionProperty {
 
   public String toString() {
     return getClass().getSimpleName() + "[name=" + name + "]"; 
+  }
+
+  private boolean isSimple(Class<?> type) {
+    return type == String.class || type == Date.class || ClassUtils.isPrimitiveOrWrapper(type);
   }
 }

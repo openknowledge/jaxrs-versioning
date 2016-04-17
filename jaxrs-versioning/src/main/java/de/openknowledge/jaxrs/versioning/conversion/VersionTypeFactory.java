@@ -20,10 +20,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class VersionTypeFactory {
 
-  private ConcurrentHashMap<Class<?>, VersionType> types = new ConcurrentHashMap<Class<?>, VersionType>();
+  private ConcurrentHashMap<Class<?>, VersionType<?>> types = new ConcurrentHashMap<Class<?>, VersionType<?>>();
 
-  public VersionType get(Class<?> type) {
-    VersionType versionType = types.get(type);
+  public <T> VersionType<T> get(Class<T> type) {
+    VersionType<T> versionType = (VersionType<T>)types.get(type);
     if (versionType != null) {
       return versionType;
     }
@@ -31,7 +31,7 @@ public class VersionTypeFactory {
     return get(type);
   }
 
-  private VersionType create(Class<?> type) {
-    return new FieldVersionType(type, this);
+  private <T> VersionType<T> create(Class<T> type) {
+    return new FieldVersionType<T>(type, this);
   }
 }
