@@ -109,7 +109,7 @@ public class AddressResourceTest {
     JSONObject address = new JSONObject(IOUtils.toString(new URL(url, "v1/addresses/42").openStream()));
     JSONObject street = address.getJSONObject("street");
     assertThat(street.getString("streetName"), is("Samplestreet"));
-    assertThat(street.getString("streetNumber"), is("1"));
+    assertThat(street.getInt("streetNumber"), is(1));
     assertThat(address.getString("city"), is("12345 Samplecity"));
   }
 
@@ -120,7 +120,7 @@ public class AddressResourceTest {
     JSONObject address = new JSONObject(IOUtils.toString(result));
     JSONObject street = address.getJSONObject("street");
     assertThat(street.getString("streetName"), is("Samplestreet"));
-    assertThat(street.getString("streetNumber"), is("1"));
+    assertThat(street.getInt("streetNumber"), is(1));
     assertThat(address.getString("city"), is("12345 Samplecity"));
   }
 

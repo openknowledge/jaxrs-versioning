@@ -35,7 +35,7 @@ public class StreetV1 {
   protected String streetName;
 
   @MovedFrom("number")
-  protected String streetNumber;
+  protected int streetNumber;
 
   @MovedFrom("streetNumber")
   @Removed(provider = HouseNumberProvider.class)
@@ -70,7 +70,7 @@ public class StreetV1 {
     return streetName;
   }
 
-  public String getStreetNumber() {
+  public int getStreetNumber() {
     return streetNumber;
   }
 

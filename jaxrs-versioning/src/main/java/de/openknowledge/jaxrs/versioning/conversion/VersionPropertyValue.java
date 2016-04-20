@@ -32,6 +32,10 @@ public class VersionPropertyValue {
     return property;
   }
 
+  public boolean isDefault() {
+    return property.isDefault(context.getParent());
+  }
+
   public Object get() {
     return property.get(context.getParent());
   }

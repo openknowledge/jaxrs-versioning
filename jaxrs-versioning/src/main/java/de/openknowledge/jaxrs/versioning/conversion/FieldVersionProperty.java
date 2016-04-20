@@ -17,6 +17,7 @@ import static org.apache.commons.lang3.Validate.notNull;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.sql.Date;
 import java.util.Collection;
@@ -32,7 +33,9 @@ import de.openknowledge.jaxrs.versioning.Removed;
 public class FieldVersionProperty implements VersionProperty {
 
   private String name;
+
   private Class<?> type;
+
   private Field field;
 
   public FieldVersionProperty(Field field) {
@@ -74,6 +77,23 @@ public class FieldVersionProperty implements VersionProperty {
   }
 
   @Override
+  public boolean isDefault(Object base) {
+    if (!type.isPrimitive()) {
+      return get(base) == null;
+    }
+    Object value = get(base);
+    if (value instanceof Number) {
+      return ((Number)value).doubleValue() == 0;
+    } else if (value instanceof Boolean) {
+      return !((Boolean)value).booleanValue();
+    } else if (value instanceof Character) {
+      return ((Character)value).equals('\u0000');
+    } else {
+      throw new IllegalStateException("Unknown primitive type " + value.getClass().getName());
+    }
+  }
+
+  @Override
   public Object get(Object base) {
     try {
       return field.get(base);
@@ -85,7 +105,7 @@ public class FieldVersionProperty implements VersionProperty {
   @Override
   public void set(Object base, Object value) {
     try {
-      field.set(base, value);
+      field.set(base, convert(value));
     } catch (IllegalAccessException e) {
       throw new IllegalStateException(e);
     }
@@ -97,10 +117,22 @@ public class FieldVersionProperty implements VersionProperty {
   }
 
   public String toString() {
-    return getClass().getSimpleName() + "[name=" + name + "]"; 
+    return getClass().getSimpleName() + "[name=" + name + "]";
   }
 
   private boolean isSimple(Class<?> type) {
     return type == String.class || type == Date.class || ClassUtils.isPrimitiveOrWrapper(type);
+  }
+
+  private Object convert(Object value) {
+    if (value == null || !isSimple() || type.isAssignableFrom(value.getClass())) {
+      return value;
+    }
+    Class<?> targetType = type.isPrimitive() ? ClassUtils.primitiveToWrapper(type) : type;
+    try {
+      return targetType.getConstructor(String.class).newInstance(value.toString());
+    } catch (ReflectiveOperationException e) {
+      throw new IllegalStateException(e);
+    }
   }
 }

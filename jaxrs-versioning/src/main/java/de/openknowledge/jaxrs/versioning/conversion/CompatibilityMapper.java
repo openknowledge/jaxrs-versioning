@@ -44,8 +44,10 @@ public class CompatibilityMapper {
 
       if (movedFrom == null && added == null) {
         if (!versionProperty.isSimple() && !versionProperty.isCollection()) {
-          Object value = versionProperty.get(object);
-          if (value == null) {
+          Object value;
+          if (!versionProperty.isDefault(object)) {
+            value = versionProperty.get(object);
+          } else {
             value = versionTypeFactory.get(versionProperty.getType()).newInstance();
             versionProperty.set(object, value);
           }
@@ -53,10 +55,10 @@ public class CompatibilityMapper {
         }
         continue;
       }
-      Object value = versionProperty.get(object);
-      if (value == null) {
+      if (versionProperty.isDefault(object)) {
         updateDependentValues(new VersionPropertyValue(versionProperty, context));
       } else {
+        Object value = versionProperty.get(object);
         setDependentValues(versionType, movedFrom, added, versionProperty, value, context);
         if (!versionProperty.isSimple()) {
           map(value, context.getChildContext(value));
@@ -66,7 +68,7 @@ public class CompatibilityMapper {
   }
 
   private void updateDependentValues(VersionPropertyValue propertyValue) {
-    if (propertyValue.get() != null) {
+    if (!propertyValue.isDefault()) {
       return;
     }
     VersionContext dependentContext = propertyValue.getContext();
@@ -75,7 +77,7 @@ public class CompatibilityMapper {
     MovedFrom movedFrom = propertyValue.getAnnotation(MovedFrom.class);
     if (movedFrom != null) {
       updateDependentValues(dependentType, propertyValue, movedFrom, dependentContext);
-      if (propertyValue.get() != null) {
+      if (!propertyValue.isDefault()) {
         return;
       }
     }
@@ -88,15 +90,15 @@ public class CompatibilityMapper {
         CollectionElementValue dependentValue = new CollectionElementValue(propertyValue.getProperty(), i, propertyValue.getContext());
         updateDependentValues(dependentType, dependentValue, added.value()[i], dependentContext);
       }
-      if (propertyValue.get() != null) {
+      if (!propertyValue.isDefault()) {
         return;
       }
       for (String dependency : added.dependsOn()) {
         VersionPropertyValue dependentValue = getPropertyValue(dependentType, dependency, dependentContext);
-        if (dependentValue.get() == null) {
+        if (dependentValue.isDefault()) {
           updateDependentValues(dependentValue);
         }
-        if (dependentValue.get() == null) {
+        if (dependentValue.isDefault()) {
           // we can't call the provider for now. Will be done later
           return;
         }
@@ -109,15 +111,13 @@ public class CompatibilityMapper {
 
   private void updateDependentValues(VersionType<?> dependentType, VersionPropertyValue propertyValue, MovedFrom movedFrom, VersionContext dependentContext) {
     VersionPropertyValue dependentValue = getPropertyValue(dependentType, movedFrom.value(), dependentContext);
-    Object value = dependentValue.get();
-    if (value != null) {
-      propertyValue.set(value);
+    if (!dependentValue.isDefault()) {
+      propertyValue.set(dependentValue.get());
       return;
     }
     updateDependentValues(dependentValue);
-    value = dependentValue.get();
-    if (value != null) {
-      propertyValue.set(value);
+    if (!dependentValue.isDefault()) {
+      propertyValue.set(dependentValue.get());
       return;
     }
   }
@@ -162,18 +162,18 @@ public class CompatibilityMapper {
 
   private void setRemovedValues(VersionType<?> versionType, String dependsOn, VersionContext context) {
     VersionPropertyValue propertyValue = getPropertyValue(versionType, dependsOn, context);
-    if (propertyValue.get() == null) {
+    if (propertyValue.isDefault()) {
       Removed removed = propertyValue.getAnnotation(Removed.class);
       if (removed != null) {
         for (String dependency: removed.isDependencyOf()) {
-          if (getPropertyValue(versionType, dependency, context).get() == null) {
+          if (getPropertyValue(versionType, dependency, context).isDefault()) {
             // we can't call the provider for now. Will be done later
             return;
           }
         }
         setValue(propertyValue, removed.provider(), removed.defaultValue(), context);
-        Object value = propertyValue.get();
-        if (value != null) {
+        if (!propertyValue.isDefault()) {
+          Object value = propertyValue.get();
           MovedFrom movedFrom = propertyValue.getAnnotation(MovedFrom.class);
           Added added = propertyValue.getAnnotation(Added.class);
           setDependentValues(versionType, movedFrom, added, propertyValue.getProperty(), value, context);
@@ -208,11 +208,11 @@ public class CompatibilityMapper {
     if (pathElements.length == index + 1) {
       return createPropertyValue(property, collectionIndex, context);
     }
-    Object value;
+    Object value = null;
     if (isCollection(collectionIndex)) {
       CollectionElementValue collectionElementValue = new CollectionElementValue(property, collectionIndex, context);
       value = collectionElementValue.get();
-    } else {
+    } else if (!property.isDefault(context.getParent())) {
       value = property.get(context.getParent());
     }
     if (value == null) {

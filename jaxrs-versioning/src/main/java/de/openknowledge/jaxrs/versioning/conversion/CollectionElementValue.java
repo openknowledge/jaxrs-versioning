@@ -32,12 +32,13 @@ public class CollectionElementValue extends VersionPropertyValue {
   
   public void set(Object value) {
     Collection<Object> collection = getCollection();
-    if (collection.size() <= index) {
-      collection.add(value);
-    } else if (collection instanceof List) {
+    if (collection instanceof List) {
+      while (collection.size() <= index) {
+        collection.add(null);
+      }
       List<Object> list = (List<Object>)collection;
       list.set(index, value);
-    } else if (collection.contains(value)) {
+    } else if (!collection.contains(value)) {
       collection.add(value);
     }
   }

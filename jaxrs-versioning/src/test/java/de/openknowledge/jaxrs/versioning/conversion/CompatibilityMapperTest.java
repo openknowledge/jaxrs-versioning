@@ -22,7 +22,6 @@ import java.util.Arrays;
 
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.openknowledge.jaxrs.versioning.model.AddressV1;
@@ -176,7 +175,7 @@ public class CompatibilityMapperTest {
     return new AddressV1() {{
       street = new StreetV1() {{
         streetName = "Samplestreet";
-        streetNumber = "1";
+        streetNumber = 1;
       }};
       city = "12345 Samplecity";
     }};
@@ -274,7 +273,7 @@ public class CompatibilityMapperTest {
   private Matcher<AddressV1> v11() {
     return allOf(
         streetHasStreetName("Samplestreet"),
-        streetHasStreetNumber("1"),
+        streetHasStreetNumber(1),
         hasCity("12345 Samplecity"));
   }
 
@@ -372,9 +371,9 @@ public class CompatibilityMapperTest {
     };
   }
 
-  private Matcher<AddressV1> streetHasStreetNumber(String number) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(number)), "street.streetNumber", "street.streetNumber") {
-       protected String featureValueOf(AddressV1 actual) {
+  private Matcher<AddressV1> streetHasStreetNumber(int number) {
+    return new FeatureMatcher<AddressV1, Integer>(is(equalTo(number)), "street.streetNumber", "street.streetNumber") {
+       protected Integer featureValueOf(AddressV1 actual) {
           return actual.getStreet().getStreetNumber();
        }
     };
