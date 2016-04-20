@@ -128,9 +128,7 @@ public class CompatibilityMapper {
       value.set(providerInstance.get(context));
     } else if (!defaultValue.isEmpty()) {
       value.set(defaultValue);
-    } else if (value.getProperty().isCollection()) {
-      System.out.println();
-    } else if (!value.getProperty().isSimple()) {
+    } else if (!value.getProperty().isSimple() && !value.getProperty().isCollection()) {
       Object instance = versionTypeFactory.get(value.getProperty().getType()).newInstance();
       value.set(instance);
       map(instance, context.getChildContext(instance));
