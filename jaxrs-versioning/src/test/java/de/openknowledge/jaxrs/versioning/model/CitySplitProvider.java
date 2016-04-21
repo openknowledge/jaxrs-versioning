@@ -18,11 +18,17 @@ import de.openknowledge.jaxrs.versioning.conversion.VersionContext;
 /**
  * @author Philipp Geers - open knowledge GmbH
  */
-public class ZipCodeProvider implements Provider<String> {
+public class CitySplitProvider implements Provider<String> {
   @Override
   public String get(VersionContext versionContext) {
     AddressV1 address = versionContext.getParent(AddressV1.class);
     String[] parts = address.getCity().split(" ");
-    return parts[0];
+    if (versionContext.getPropertyName().equals("zipCode")) {
+      return parts[0];
+    } else if (versionContext.getPropertyName().equals("cityName")) {
+      return parts[1];
+    } else {
+      throw new IllegalArgumentException("Unsupported property '" + versionContext.getPropertyName() + "'");
+    }
   }
 }

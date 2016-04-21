@@ -38,10 +38,10 @@ public class AddressV1 {
   @Removed(provider = CityAggregationProvider.class, isDependencyOf = {"zipCode", "cityName"})
   protected String city;
   
-  @Added(provider = ZipCodeProvider.class, dependsOn = "city")
+  @Added(provider = CitySplitProvider.class, dependsOn = "city")
   protected String zipCode;
 
-  @Added(provider = CityNameProvider.class, dependsOn = "city")
+  @Added(provider = CitySplitProvider.class, dependsOn = "city")
   protected String cityName;
   
   @MovedFrom("street/addressLine1")
