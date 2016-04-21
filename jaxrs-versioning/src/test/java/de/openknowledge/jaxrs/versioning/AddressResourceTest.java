@@ -197,7 +197,7 @@ public class AddressResourceTest {
   @Test
   public void postAddressV15(@ArquillianResource URL url) throws IOException {
     InputStream result = post(new URL(url, "v1/addresses/42"), "address_v1_5.json");
-    
+   
     JSONObject address = new JSONObject(IOUtils.toString(result));
     JSONObject location = address.getJSONObject("location");
     assertThat(address.getString("addressLine1"), is("Samplestreet 1"));

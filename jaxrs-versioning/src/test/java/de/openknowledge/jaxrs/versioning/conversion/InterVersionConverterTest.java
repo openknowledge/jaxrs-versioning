@@ -12,6 +12,7 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -75,8 +76,8 @@ public class InterVersionConverterTest {
     assertThat(address.getAddressLine1(), is("Samplestreet 1"));
     assertThat(address.getAddressLine2(), is(" "));
     assertThat(address.getAddressLines().size(), is(2));
-    assertThat(address.getAddressLines().get(0), is("Samplestreet 1"));
-    assertThat(address.getAddressLines().get(1), is(" "));
+    assertThat(address.getAddressLines(), hasItem("Samplestreet 1"));
+    assertThat(address.getAddressLines(), hasItem(" "));
     assertThat(address.getCity().getZipCode(), is("12345"));
     assertThat(address.getCity().getCityName(), is("Samplecity"));
   }
@@ -97,8 +98,8 @@ public class InterVersionConverterTest {
     assertThat(address.getAddressLine1(), is("Samplestreet 1"));
     assertThat(address.getAddressLine2(), is(" "));
     assertThat(address.getAddressLines().size(), is(2));
-    assertThat(address.getAddressLines().get(0), is("Samplestreet 1"));
-    assertThat(address.getAddressLines().get(1), is(" "));
+    assertThat(address.getAddressLines(), hasItem("Samplestreet 1"));
+    assertThat(address.getAddressLines(), hasItem(" "));
     assertThat(address.getCity().getZipCode(), is("12345"));
     assertThat(address.getCity().getCityName(), is("Samplecity"));
   }

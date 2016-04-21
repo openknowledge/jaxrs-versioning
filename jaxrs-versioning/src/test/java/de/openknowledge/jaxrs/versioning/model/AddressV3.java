@@ -12,8 +12,12 @@
  */
 package de.openknowledge.jaxrs.versioning.model;
 
-import java.util.Arrays;
-import java.util.List;
+import static java.util.Arrays.asList;
+import static java.util.Collections.reverseOrder;
+
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import de.openknowledge.jaxrs.versioning.MovedFrom;
 import de.openknowledge.jaxrs.versioning.SupportedVersion;
@@ -25,7 +29,7 @@ import de.openknowledge.jaxrs.versioning.SupportedVersion;
 @SupportedVersion(version = "v3", previous = AddressV2.class)
 public class AddressV3 {
 
-  protected List<String> addressLines;
+  protected SortedSet<String> addressLines = new TreeSet<String>(reverseOrder());
 
   @MovedFrom("addressLines[0]")
   protected String addressLine1;
@@ -45,7 +49,7 @@ public class AddressV3 {
   }
 
   public AddressV3(CityV3 location, String... addressLines) {
-    this.addressLines = Arrays.asList(addressLines);
+    this.addressLines.addAll(asList(addressLines));
     this.city = location;
   }
 
@@ -57,7 +61,7 @@ public class AddressV3 {
     return addressLine2;
   }
 
-  public List<String> getAddressLines() {
+  public Set<String> getAddressLines() {
     return addressLines;
   }
 

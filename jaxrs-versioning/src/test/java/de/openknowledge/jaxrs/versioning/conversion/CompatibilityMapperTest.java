@@ -12,8 +12,10 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -155,8 +157,8 @@ public class CompatibilityMapperTest {
     AddressV3 address = createV31();
     mapper.map(address);
     assertThat(address.getAddressLines().size(), is(2));
-    assertThat(address.getAddressLines().get(0), is("Samplestreet 1"));
-    assertThat(address.getAddressLines().get(1), is(" "));
+    assertThat(address.getAddressLines().iterator().next(), is("Samplestreet 1"));
+    assertThat(address.getAddressLines(), hasItem(" "));
     assertThat(address.getCity().getZipCode(), is("12345"));
     assertThat(address.getCity().getCityName(), is("Samplecity"));
   }
@@ -244,7 +246,7 @@ public class CompatibilityMapperTest {
 
   public AddressV3 createV30() {
     return new AddressV3() {{
-      addressLines = Arrays.asList("Samplestreet 1", " ");
+      addressLines.addAll(asList("Samplestreet 1", " "));
       city = new CityV3() {{
         zipCode = "12345";
         cityName = "Samplecity";

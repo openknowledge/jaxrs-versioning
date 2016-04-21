@@ -23,9 +23,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import de.openknowledge.jaxrs.versioning.model.AddressV2;
 import de.openknowledge.jaxrs.versioning.model.AddressV3;
-import de.openknowledge.jaxrs.versioning.model.CityV2;
+import de.openknowledge.jaxrs.versioning.model.CityV3;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
@@ -36,18 +35,18 @@ public class AddressResource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public List<AddressV2> getAddresses() {
+  public List<AddressV3> getAddresses() {
     return Arrays.asList(
-        new AddressV2(
+        new AddressV3(
             "Samplestreet 1",
             " ",
-            new CityV2(
+            new CityV3(
                 "12345",
                 "Samplecity")),
-        new AddressV2(
+        new AddressV3(
             "Samplestreet 2",
             " ",
-            new CityV2(
+            new CityV3(
                 "12345",
                 "Samplecity")));
   }
@@ -55,11 +54,11 @@ public class AddressResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  public AddressV2 getAddress(@PathParam("id") int id) {
-    return new AddressV2(
+  public AddressV3 getAddress(@PathParam("id") int id) {
+    return new AddressV3(
         "Samplestreet 1",
         " ",
-        new CityV2(
+        new CityV3(
             "12345",
             "Samplecity"));
   }

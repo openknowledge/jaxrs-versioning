@@ -13,10 +13,15 @@
 package de.openknowledge.jaxrs.versioning.conversion;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.ext.InterceptorContext;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.ReaderInterceptor;
 import javax.ws.rs.ext.ReaderInterceptorContext;
@@ -41,49 +46,116 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
   
   @Override
   public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {
-    if (!context.getType().isAnnotationPresent(SupportedVersion.class)) {
+    if (!isVersioningSupported(context)) {
       return context.proceed();
     }
     String sourceVersion = getVersion();
-    Class<?> targetType = context.getType();
-    Class<?> sourceType = getSourceType(targetType, sourceVersion);
-    context.setType(sourceType);
+    Type targetType = context.getGenericType();
+    Type sourceType = getVersionType(targetType, sourceVersion);
+    context.setType(toClass(sourceType));
     context.setGenericType(sourceType);
     Object sourceObject = context.proceed();
-    mapper.map(sourceObject);
-    Object target = converter.convertToHigherVersion(targetType, sourceObject, sourceVersion);
-    context.setType(targetType);
+    Object target;
+    if (sourceObject instanceof Collection) {
+      target = convertCollectionToHigherVersion(targetType, (Collection<?>)sourceObject, sourceVersion);
+    } else {
+      target = converter.convertToHigherVersion(toClass(targetType), sourceObject, sourceVersion);
+    }
+    context.setType(toClass(targetType));
     context.setGenericType(targetType);
+    return target;
+  }
+
+  private Collection<?> convertCollectionToHigherVersion(Type targetCollectionType, Collection<?> source, String sourceVersion) {
+    Collection<Object> target = new ArrayList<>();
+    Class<?> targetType = getTypeArgument(targetCollectionType);
+    for (Object sourceObject: source) {
+      mapper.map(sourceObject);
+      target.add(converter.convertToHigherVersion(targetType, sourceObject, sourceVersion));
+    }
     return target;
   }
 
   @Override
   public void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException {
-    if (!context.getType().isAnnotationPresent(SupportedVersion.class)) {
+    if (!isVersioningSupported(context)) {
       context.proceed();
       return;
     }
     String targetVersion = getVersion();
     Object source = context.getEntity();
-    mapper.map(source);
-    Object target = converter.convertToLowerVersion(targetVersion, source);
-    context.setEntity(target);
+    if (source instanceof Collection) {
+      context.setEntity(convertCollectionToLowerVersion(targetVersion, (Collection<?>)source));
+    } else {
+      mapper.map(source);
+      context.setEntity(converter.convertToLowerVersion(targetVersion, source));
+    }
+    Type targetType = getVersionType(context.getGenericType(), targetVersion);
+    context.setType(toClass(targetType));
+    context.setGenericType(targetType);
     context.proceed();
+  }
+
+  private Collection<?> convertCollectionToLowerVersion(String targetVersion, Collection<?> source) {
+    Collection<Object> target = new ArrayList<>();
+    for (Object sourceObject: source) {
+      mapper.map(sourceObject);
+      target.add(converter.convertToLowerVersion(targetVersion, sourceObject));
+    }
+    return target;
+  }
+
+  private boolean isVersioningSupported(InterceptorContext context) {
+    Class<?> simpleType = context.getType();
+    if (Collection.class.isAssignableFrom(context.getType())) {
+      if (!(context.getGenericType() instanceof ParameterizedType)) {
+        return false;
+      }
+      simpleType = getTypeArgument(context.getGenericType());
+      if (simpleType == null) {
+        return false;
+      }
+    }
+    return simpleType.isAnnotationPresent(SupportedVersion.class);
   }
 
   private String getVersion() {
     return uriInfo.getPathParameters().get("version").iterator().next();
   }
 
-  private Class<?> getSourceType(Class<?> type, String version) {
-    SupportedVersion supportedVersion = factory.get(type).getAnnotation(SupportedVersion.class);
+  private Type getVersionType(Type type, String version) {
+    Class<?> rawType = toClass(type);
+    if (Collection.class.isAssignableFrom(rawType)) {
+      Type sourceType = getVersionType(getTypeArgument(type), version);
+      return new DefaultParameterizedType(((ParameterizedType)type).getOwnerType(), rawType, sourceType);
+    }
+    SupportedVersion supportedVersion = toClass(type).getAnnotation(SupportedVersion.class);
     if (supportedVersion == null) {
       throw new IllegalArgumentException("unsupported version " + version + " for type " + type);
     }
     if (supportedVersion.version().equals(version)) {
       return type;
     } else {
-      return getSourceType(supportedVersion.previous(), version);
+      return getVersionType(supportedVersion.previous(), version);
     }
+  }
+
+  private Class<?> toClass(Type type) {
+    if (type instanceof Class) {
+      return (Class<?>)type;
+    } else if (type instanceof ParameterizedType) {
+      return toClass(((ParameterizedType)type).getRawType());
+    } else {
+      throw new IllegalArgumentException("Unsupported generic type " + type);
+    }
+  }
+
+  private Class<?> getTypeArgument(Type type) {
+    if (!(type instanceof ParameterizedType)) {
+      return null;
+    }
+    ParameterizedType parameterizedType = (ParameterizedType)type;
+    Type actualTypeArgument = parameterizedType.getActualTypeArguments()[0];
+    return actualTypeArgument instanceof Class? toClass(actualTypeArgument): null; 
   }
 }
