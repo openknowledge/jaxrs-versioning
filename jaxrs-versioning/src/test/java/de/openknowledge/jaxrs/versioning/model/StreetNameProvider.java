@@ -18,10 +18,10 @@ import de.openknowledge.jaxrs.versioning.conversion.VersionContext;
 /**
  * @author Arne Limburg - open knowledge GmbH
  */
-public class StreetNameProvider implements Provider {
+public class StreetNameProvider implements Provider<String> {
   @Override
-  public Object get(VersionContext versionContext) {
-    StreetV1 street = (StreetV1)versionContext.getParent();
+  public String get(VersionContext versionContext) {
+    StreetV1 street = versionContext.getParent(StreetV1.class);
     String[] parts = street.getAddressLine1().split(" ");
     return parts[0];
   }

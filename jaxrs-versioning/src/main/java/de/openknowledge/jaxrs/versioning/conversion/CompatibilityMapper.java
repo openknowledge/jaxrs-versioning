@@ -124,8 +124,13 @@ public class CompatibilityMapper {
 
   private void setValue(VersionPropertyValue value, Class<? extends Provider> provider, String defaultValue, VersionContext context) {
     if (!provider.equals(Provider.class)) {
-      Provider providerInstance = (Provider)versionTypeFactory.get(provider).newInstance();
-      value.set(providerInstance.get(context));
+      Provider<?> providerInstance = (Provider<?>)versionTypeFactory.get(provider).newInstance();
+      try {
+        context.setPropertyName(value.getProperty().getName());
+        value.set(providerInstance.get(context));
+      } finally {
+        context.setPropertyName(null);
+      }
     } else if (!defaultValue.isEmpty()) {
       value.set(defaultValue);
     } else if (!value.getProperty().isSimple() && !value.getProperty().isCollection()) {

@@ -18,10 +18,10 @@ import de.openknowledge.jaxrs.versioning.conversion.VersionContext;
 /**
  * @author Arne Limburg - open knowledge GmbH
  */
-public class CityAggregationProvider implements Provider {
+public class CityAggregationProvider implements Provider<String> {
   @Override
-  public Object get(VersionContext versionContext) {
-    AddressV1 address = (AddressV1)versionContext.getParent();
+  public String get(VersionContext versionContext) {
+    AddressV1 address = versionContext.getParent(AddressV1.class);
     return address.getZipCode() + " " + address.getCityName();
   }
 }

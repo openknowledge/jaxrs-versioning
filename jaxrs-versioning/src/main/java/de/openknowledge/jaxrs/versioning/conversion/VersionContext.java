@@ -21,6 +21,7 @@ import java.util.List;
  */
 public class VersionContext {
 
+  private String propertyName;
   private List<Object> parents;
   
   public VersionContext() {
@@ -38,6 +39,24 @@ public class VersionContext {
 
   public Object getParent() {
     return parents.get(parents.size() - 1);
+  }
+
+  public <T> T getParent(Class<T> type) {
+    for (int i = parents.size() - 1; i >= 0; i--) {
+      Object parent = parents.get(i);
+      if (type.isInstance(parent)) {
+        return (T)parent;
+      }
+    }
+    return null;
+  }
+  
+  public String getPropertyName() {
+    return propertyName;
+  }
+
+  void setPropertyName(String name) {
+    propertyName = name;
   }
 
   VersionContext getParentContext() {
