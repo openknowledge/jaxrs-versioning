@@ -131,7 +131,7 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
     }
     SupportedVersion supportedVersion = toClass(type).getAnnotation(SupportedVersion.class);
     if (supportedVersion == null) {
-      throw new IllegalArgumentException("unsupported version " + version + " for type " + type);
+      throw new IllegalVersionException(version);
     }
     if (supportedVersion.version().equals(version)) {
       return type;

@@ -15,6 +15,7 @@ package de.openknowledge.jaxrs.versioning;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -82,6 +83,28 @@ public class AddressResourceTest {
     assertThat(address2.getString("addressLine2"), is(" "));
     assertThat(location2.getString("zipCode"), is("12345"));
     assertThat(location2.getString("cityName"), is("Samplecity"));
+  }
+
+  @Test(expected = FileNotFoundException.class)
+  public void getAddressV0(@ArquillianResource URL url) throws IOException {
+    HttpURLConnection connection = (HttpURLConnection)new URL(url, "v0/addresses/42").openConnection();
+    connection.getInputStream();
+  }
+
+  @Test(expected = FileNotFoundException.class)
+  public void postAddressV0(@ArquillianResource URL url) throws IOException {
+    post(new URL(url, "v0/addresses/42"), "address_v1_0.json");
+  }
+
+  @Test(expected = FileNotFoundException.class)
+  public void getAddressV4(@ArquillianResource URL url) throws IOException {
+    HttpURLConnection connection = (HttpURLConnection)new URL(url, "v4/addresses/42").openConnection();
+    connection.getInputStream();
+  }
+
+  @Test(expected = FileNotFoundException.class)
+  public void postAddressV4(@ArquillianResource URL url) throws IOException {
+    post(new URL(url, "v4/addresses/42"), "address_v1_0.json");
   }
 
   @Test

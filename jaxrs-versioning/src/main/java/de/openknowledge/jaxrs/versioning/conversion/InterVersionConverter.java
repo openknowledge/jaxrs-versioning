@@ -39,31 +39,37 @@ public class InterVersionConverter {
   public Object convertToLowerVersion(String targetVersion, Object source) {
     Class<?> sourceType = source.getClass();
     if (sourceType == Object.class) {
-      throw new IllegalArgumentException("unsupported version: " + targetVersion);
+      throw new IllegalVersionException(targetVersion);
     }
     VersionType<?> versionType = factory.get(sourceType);
     SupportedVersion supportedVersion = versionType.getAnnotation(SupportedVersion.class);
     if (supportedVersion == null) {
-      throw new IllegalArgumentException("unsupported version: " + targetVersion + sourceType.getName());
+      throw new IllegalVersionException(targetVersion);
     }
     if (targetVersion.equals(supportedVersion.version())) {
       return source;
+    }
+    if (supportedVersion.previous() == Object.class) {
+      throw new IllegalVersionException(targetVersion);
     }
     return convertToLowerVersion(targetVersion, map(source, supportedVersion.previous(), new VersionContext()));
   }
 
   public <T> T convertToHigherVersion(Class<T> targetType, Object source, String sourceVersion) {
     if (targetType == Object.class) {
-      throw new IllegalArgumentException("unsupported version: " + sourceVersion);
+      throw new IllegalVersionException(sourceVersion);
     }
     VersionType<?> versionType = factory.get(targetType);
     SupportedVersion supportedVersion = versionType.getAnnotation(SupportedVersion.class);
     if (supportedVersion == null) {
-      throw new IllegalArgumentException("unsupported version: " + sourceVersion);
+      throw new IllegalVersionException(sourceVersion);
     }
     if (supportedVersion.version().equals(sourceVersion)) {
       mapper.map(source);
       return targetType.cast(source);
+    }
+    if (supportedVersion.previous() == Object.class) {
+      throw new IllegalVersionException(sourceVersion);
     }
     Object previousVersion = convertToHigherVersion(supportedVersion.previous(), source, sourceVersion);
     return map(previousVersion, targetType, new VersionContext());
