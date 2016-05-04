@@ -12,9 +12,13 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import static de.openknowledge.jaxrs.versioning.model.AddressMatchers.v10;
+import static de.openknowledge.jaxrs.versioning.model.AddressMatchers.v11;
+import static de.openknowledge.jaxrs.versioning.model.AddressMatchers.v12;
+import static de.openknowledge.jaxrs.versioning.model.AddressMatchers.v13;
+import static de.openknowledge.jaxrs.versioning.model.AddressMatchers.v14;
+import static de.openknowledge.jaxrs.versioning.model.AddressMatchers.v15;
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
@@ -22,8 +26,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 
-import org.hamcrest.FeatureMatcher;
-import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import de.openknowledge.jaxrs.versioning.model.AddressV1;
@@ -263,161 +265,5 @@ public class CompatibilityMapperTest {
         cityName = "Samplecity";
       }};
     }};
-  }
-
-  private Matcher<AddressV1> v10() {
-    return allOf(
-        streetHasName("Samplestreet"),
-        streetHasNumber("1"),
-        hasCity("12345 Samplecity"));
-  }
-
-  private Matcher<AddressV1> v11() {
-    return allOf(
-        streetHasStreetName("Samplestreet"),
-        streetHasStreetNumber(1),
-        hasCity("12345 Samplecity"));
-  }
-
-  private Matcher<AddressV1> v12() {
-    return allOf(
-        streetHasStreetName("Samplestreet"),
-        streetHasHouseNumber("1"),
-        hasCity("12345 Samplecity"));
-  }
-
-  private Matcher<AddressV1> v13() {
-    return allOf(
-        streetHasAddressLine1("Samplestreet 1"),
-        streetHasAddressLine2(" "),
-        hasCity("12345 Samplecity"));
-  }
-
-  private Matcher<AddressV1> v14() {
-    return allOf(
-        hasAddressLine1("Samplestreet 1"),
-        hasAddressLine2(" "),
-        hasZipCode("12345"),
-        hasCityName("Samplecity"));
-  }
-
-  private Matcher<AddressV1> v15() {
-    return allOf(
-        hasAddressLine1("Samplestreet 1"),
-        hasAddressLine2(" "),
-        locationHasZipCode("12345"),
-        locationHasCityName("Samplecity"));
-  }
-
-  private Matcher<AddressV1> hasAddressLine1(String line) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(line)), "addressLine1", "addressLine1") {
-       protected String featureValueOf(AddressV1 actual) {
-          return actual.getAddressLine1();
-       }
-    };
-  }
-
-  private Matcher<AddressV1> hasAddressLine2(String line) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(line)), "addressLine2", "addressLine2") {
-       protected String featureValueOf(AddressV1 actual) {
-          return actual.getAddressLine2();
-       }
-    };
-  }
-
-  private Matcher<AddressV1> hasCity(String city) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(city)), "city", "city") {
-       protected String featureValueOf(AddressV1 actual) {
-          return actual.getCity();
-       }
-    };
-  }
-
-  private Matcher<AddressV1> hasZipCode(String zipCode) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(zipCode)), "zipCode", "zipCode") {
-       protected String featureValueOf(AddressV1 actual) {
-          return actual.getZipCode();
-       }
-    };
-  }
-
-  private Matcher<AddressV1> hasCityName(String city) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(city)), "cityName", "cityName") {
-       protected String featureValueOf(AddressV1 actual) {
-          return actual.getCityName();
-       }
-    };
-  }
-
-  private Matcher<AddressV1> streetHasName(String name) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(name)), "street.name", "street.name") {
-       protected String featureValueOf(AddressV1 actual) {
-          return actual.getStreet().getName();
-       }
-    };
-  }
-
-  private Matcher<AddressV1> streetHasNumber(String number) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(number)), "street.number", "street.number") {
-       protected String featureValueOf(AddressV1 actual) {
-          return actual.getStreet().getNumber();
-       }
-    };
-  }
-
-  private Matcher<AddressV1> streetHasStreetName(String name) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(name)), "street.streetName", "street.streetName") {
-       protected String featureValueOf(AddressV1 actual) {
-          return actual.getStreet().getStreetName();
-       }
-    };
-  }
-
-  private Matcher<AddressV1> streetHasStreetNumber(int number) {
-    return new FeatureMatcher<AddressV1, Integer>(is(equalTo(number)), "street.streetNumber", "street.streetNumber") {
-       protected Integer featureValueOf(AddressV1 actual) {
-          return actual.getStreet().getStreetNumber();
-       }
-    };
-  }
-
-  private Matcher<AddressV1> streetHasHouseNumber(String number) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(number)), "street.houseNumber", "street.houseNumber") {
-       protected String featureValueOf(AddressV1 actual) {
-          return actual.getStreet().getHouseNumber();
-       }
-    };
-  }
-
-  private Matcher<AddressV1> streetHasAddressLine1(String line) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(line)), "street.addressLine1", "street.addressLine1") {
-       protected String featureValueOf(AddressV1 actual) {
-          return actual.getStreet().getAddressLine1();
-       }
-    };
-  }
-
-  private Matcher<AddressV1> streetHasAddressLine2(String line) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(line)), "street.addressLine2", "street.addressLine2") {
-       protected String featureValueOf(AddressV1 actual) {
-          return actual.getStreet().getAddressLine2();
-       }
-    };
-  }
-
-  private Matcher<AddressV1> locationHasZipCode(String zipCode) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(zipCode)), "location.zipCode", "location.zipCode") {
-       protected String featureValueOf(AddressV1 actual) {
-          return actual.getLocation().getZipCode();
-       }
-    };
-  }
-
-  private Matcher<AddressV1> locationHasCityName(String cityName) {
-    return new FeatureMatcher<AddressV1, String>(is(equalTo(cityName)), "location.cityName", "location.cityName") {
-       protected String featureValueOf(AddressV1 actual) {
-          return actual.getLocation().getCityName();
-       }
-    };
   }
 }

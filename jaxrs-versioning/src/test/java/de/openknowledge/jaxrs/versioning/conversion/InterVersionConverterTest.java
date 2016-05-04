@@ -12,9 +12,14 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import static de.openknowledge.jaxrs.versioning.model.AddressMatchers.v10;
+import static de.openknowledge.jaxrs.versioning.model.AddressMatchers.v2;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Test;
 
@@ -23,6 +28,8 @@ import de.openknowledge.jaxrs.versioning.model.AddressV2;
 import de.openknowledge.jaxrs.versioning.model.AddressV3;
 import de.openknowledge.jaxrs.versioning.model.CityV2;
 import de.openknowledge.jaxrs.versioning.model.CityV3;
+import de.openknowledge.jaxrs.versioning.model.CustomerV1;
+import de.openknowledge.jaxrs.versioning.model.CustomerV2;
 import de.openknowledge.jaxrs.versioning.model.LocationV1;
 import de.openknowledge.jaxrs.versioning.model.StreetV1;
 
@@ -37,7 +44,7 @@ public class InterVersionConverterTest {
   private InterVersionConverter converter = new InterVersionConverter(factory, mapper);
 
   @Test
-  public void convertFromV2ToV1() {
+  public void convertAddressFromV2ToV1() {
     AddressV1 address = (AddressV1)converter.convertToLowerVersion("v1", new AddressV2("Samplestreet 1", " ", new CityV2("12345", "Samplecity")));
     assertThat(address.getAddressLine1(), is("Samplestreet 1"));
     assertThat(address.getAddressLine2(), is(" "));
@@ -48,7 +55,7 @@ public class InterVersionConverterTest {
   }
 
   @Test
-  public void convertFromV1ToV2() {
+  public void convertAddressFromV1ToV2() {
     AddressV2 address = converter.convertToHigherVersion(AddressV2.class,
         new AddressV1("Samplestreet 1", " ", new LocationV1("12345", "Samplecity")), "v1");
     assertThat(address.getAddressLines().get(0), is("Samplestreet 1"));
@@ -58,7 +65,7 @@ public class InterVersionConverterTest {
   }
 
   @Test
-  public void convertFromV3ToV2() {
+  public void convertAddressFromV3ToV2() {
     AddressV2 address = (AddressV2)converter.convertToLowerVersion("v2",
         new AddressV3(new CityV3("12345", "Samplecity"), "Samplestreet 1", " "));
     assertThat(address.getAddressLines().size(), is(2));
@@ -71,7 +78,7 @@ public class InterVersionConverterTest {
   }
 
   @Test
-  public void convertFromV2ToV3() {
+  public void convertAddressFromV2ToV3() {
     AddressV3 address = converter.convertToHigherVersion(AddressV3.class, new AddressV2("Samplestreet 1", " ", new CityV2("12345", "Samplecity")), "v2");
     assertThat(address.getAddressLine1(), is("Samplestreet 1"));
     assertThat(address.getAddressLine2(), is(" "));
@@ -83,7 +90,7 @@ public class InterVersionConverterTest {
   }
 
   @Test
-  public void convertFromV3ToV1() {
+  public void convertAddressFromV3ToV1() {
     AddressV1 address = (AddressV1)converter.convertToLowerVersion("v1", new AddressV3("Samplestreet 1", " ", new CityV3("12345", "Samplecity")));
     assertThat(address.getStreet().getName(), is("Samplestreet"));
     assertThat(address.getStreet().getNumber(), is("1"));
@@ -93,7 +100,7 @@ public class InterVersionConverterTest {
   }
 
   @Test
-  public void convertFromV1ToV3() {
+  public void convertAddressFromV1ToV3() {
     AddressV3 address = converter.convertToHigherVersion(AddressV3.class, new AddressV1(new StreetV1("Samplestreet", "1"), "12345 Samplecity"), "v1");
     assertThat(address.getAddressLine1(), is("Samplestreet 1"));
     assertThat(address.getAddressLine2(), is(" "));
@@ -102,5 +109,25 @@ public class InterVersionConverterTest {
     assertThat(address.getAddressLines(), hasItem(" "));
     assertThat(address.getCity().getZipCode(), is("12345"));
     assertThat(address.getCity().getCityName(), is("Samplecity"));
+  }
+
+  @Test
+  public void convertCustomerFromV1ToV2() {
+    CustomerV2 customer = converter.convertToHigherVersion(CustomerV2.class, new CustomerV1() {{
+      name = "customer";
+      addresses = Arrays.asList(new AddressV1(new StreetV1("Samplestreet", "1"), "12345 Samplecity"));
+    }}, "v1");
+    assertThat(customer.getName(), is("customer"));
+    assertThat(customer.getAddresses().size(), is(1));
+    assertThat(customer.getAddresses(), hasItem(v2()));
+  }
+
+  @Test
+  public void convertCustomerFromV2ToV1() {
+    CustomerV1 customer = (CustomerV1)converter.convertToLowerVersion("v1",
+        new CustomerV2("customer", new AddressV2("Samplestreet 1", " ", new CityV2("12345", "Samplecity"))));
+    assertThat(customer.getName(), is("customer"));
+    assertThat(customer.getAddresses().size(), is(1));
+    assertThat(customer.getAddresses(), hasItem(v10()));
   }
 }

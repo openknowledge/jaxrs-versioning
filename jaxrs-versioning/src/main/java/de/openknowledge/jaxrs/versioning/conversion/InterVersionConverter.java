@@ -102,7 +102,7 @@ public class InterVersionConverter {
           }
         } else if (targetProperty.isSimple() || targetProperty.getType().isAssignableFrom(previousProperty.getType())) {
           targetProperty.set(target, previousProperty.get(previous));
-        } else {
+        } else if (!previousProperty.isDefault(previous)) {
           targetProperty.set(target, map(previousProperty.get(previous), targetProperty.getType(), context));
         }
       }

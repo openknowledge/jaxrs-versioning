@@ -12,6 +12,8 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import java.util.Collection;
+
 import org.apache.commons.lang3.StringUtils;
 
 import de.openknowledge.jaxrs.versioning.Added;
@@ -43,7 +45,14 @@ public class CompatibilityMapper {
       Added added = versionProperty.getAnnotation(Added.class);
 
       if (movedFrom == null && added == null) {
-        if (!versionProperty.isSimple() && !versionProperty.isCollection()) {
+        if (versionProperty.isCollection() && !versionProperty.isCollectionOfSimpleTypes()) {
+          if (!versionProperty.isDefault(object)) {
+            Collection<?> collection = (Collection<?>)versionProperty.get(object);
+            for (Object entry: collection) {
+              map(entry, context.getChildContext(entry));
+            }
+          }
+        } else if (!versionProperty.isSimple() && !versionProperty.isCollectionOfSimpleTypes()) {
           Object value;
           if (!versionProperty.isDefault(object)) {
             value = versionProperty.get(object);
@@ -68,9 +77,6 @@ public class CompatibilityMapper {
   }
 
   private void updateDependentValues(VersionPropertyValue propertyValue) {
-    if (!propertyValue.isDefault()) {
-      return;
-    }
     VersionContext dependentContext = propertyValue.getContext();
     VersionType<?> dependentType = versionTypeFactory.get(dependentContext.getParent().getClass());
 
@@ -111,14 +117,11 @@ public class CompatibilityMapper {
 
   private void updateDependentValues(VersionType<?> dependentType, VersionPropertyValue propertyValue, MovedFrom movedFrom, VersionContext dependentContext) {
     VersionPropertyValue dependentValue = getPropertyValue(dependentType, movedFrom.value(), dependentContext);
-    if (!dependentValue.isDefault()) {
-      propertyValue.set(dependentValue.get());
-      return;
+    if (dependentValue.isDefault()) {
+      updateDependentValues(dependentValue);
     }
-    updateDependentValues(dependentValue);
     if (!dependentValue.isDefault()) {
       propertyValue.set(dependentValue.get());
-      return;
     }
   }
 
