@@ -84,6 +84,19 @@ public class AddressResourceTest {
     assertThat(location2.getString("zipCode"), is("12345"));
     assertThat(location2.getString("cityName"), is("Samplecity"));
   }
+  
+  @Test
+  public void putAddressesV1(@ArquillianResource URL url) throws IOException {
+    InputStream result = put(new URL(url, "v1/addresses"), "addresses_v1_0.json");
+    
+    JSONArray addresses = new JSONArray(IOUtils.toString(result));
+    JSONObject address = addresses.getJSONObject(0);
+    JSONObject street = address.getJSONObject("street");
+    assertThat(addresses.length(), is(1));
+    assertThat(street.getString("name"), is("Samplestreet"));
+    assertThat(street.getString("number"), is("1"));
+    assertThat(address.getString("city"), is("12345 Samplecity"));
+  }
 
   @Test(expected = FileNotFoundException.class)
   public void getAddressV0(@ArquillianResource URL url) throws IOException {
@@ -230,8 +243,16 @@ public class AddressResourceTest {
   }
 
   private InputStream post(URL url, String resource) throws IOException {
+    return send(url, "POST", resource);
+  }
+
+  private InputStream put(URL url, String resource) throws IOException {
+    return send(url, "PUT", resource);
+  }
+
+  private InputStream send(URL url, String method, String resource) throws IOException {
     HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-    connection.setRequestMethod("POST");
+    connection.setRequestMethod(method);
     connection.setRequestProperty("Content-Type", "application/json");
     connection.setDoOutput(true);
     PrintWriter writer = new PrintWriter(connection.getOutputStream());

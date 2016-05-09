@@ -12,6 +12,7 @@
  */
 package de.openknowledge.jaxrs.versioning.conversion;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -19,15 +20,15 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.theories.suppliers.TestedOn;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
  */
 public class FieldVersionTypeTest {
 
-  private boolean booleanValue;
   private char characterValue;
+  private boolean booleanValue;
+  private boolean trueValue = true;
   private double doubleValue;
   private byte byteValue;
   private Integer integerValue = 0;
@@ -58,11 +59,18 @@ public class FieldVersionTypeTest {
   @Test
   public void fieldVersionPropertyIsDefault() {
     assertThat(fieldVersionType.getProperty("booleanValue").isDefault(this), is(true));
+    assertThat(fieldVersionType.getProperty("trueValue").isDefault(this), is(false));
     assertThat(fieldVersionType.getProperty("characterValue").isDefault(this), is(true));
     assertThat(fieldVersionType.getProperty("doubleValue").isDefault(this), is(true));
     assertThat(fieldVersionType.getProperty("byteValue").isDefault(this), is(true));
     assertThat(fieldVersionType.getProperty("integerValue").isDefault(this), is(false));
     assertThat(fieldVersionType.getProperty("collectionOfSimpleTypes").isDefault(this), is(true));
     assertThat(fieldVersionType.getProperty("collection").isDefault(this), is(true));
+  }
+
+  @Test
+  public void toStringContainsName() {
+    assertThat(fieldVersionType.toString(), containsString("FieldVersionTypeTest"));
+    assertThat(fieldVersionType.getProperty("booleanValue").toString(), containsString("booleanValue"));
   }
 }

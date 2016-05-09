@@ -18,6 +18,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -49,6 +50,28 @@ public class AddressResource {
             new CityV3(
                 "12345",
                 "Samplecity")));
+  }
+
+  @PUT
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public List<AddressV3> setAddresses(List<AddressV3> addresses) {
+    if (addresses.size() != 1) {
+      throw new IllegalArgumentException("address list must contain only one address");
+    }
+    if (!addresses.get(0).getAddressLine1().equals("Samplestreet 1")) {
+      throw new IllegalArgumentException("wrong address line 1");
+    }
+    if (!addresses.get(0).getAddressLine2().equals(" ")) {
+      throw new IllegalArgumentException("wrong address line 2");
+    }
+    if (!addresses.get(0).getCity().getZipCode().equals("12345")) {
+      throw new IllegalArgumentException("wrong zip code");
+    }
+    if (!addresses.get(0).getCity().getCityName().equals("Samplecity")) {
+      throw new IllegalArgumentException("wrong zip code");
+    }
+    return addresses;
   }
 
   @GET

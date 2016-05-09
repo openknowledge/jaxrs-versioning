@@ -1,0 +1,9 @@
+[
+    {
+        "street": {
+            "name": "Samplestreet",
+            "number": "1"
+        },
+        "city": "12345 Samplecity"
+    }
+]

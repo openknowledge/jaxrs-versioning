@@ -15,16 +15,12 @@ package de.openknowledge.jaxrs.versioning.conversion;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.lang.annotation.Annotation;
-import java.lang.annotation.Retention;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.sql.Date;
 import java.util.Collection;
 
 import org.apache.commons.lang3.ClassUtils;
-
-import de.openknowledge.jaxrs.versioning.Removed;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
@@ -82,14 +78,12 @@ public class FieldVersionProperty implements VersionProperty {
       return get(base) == null;
     }
     Object value = get(base);
-    if (value instanceof Number) {
-      return ((Number)value).doubleValue() == 0;
-    } else if (value instanceof Boolean) {
+    if (value instanceof Boolean) {
       return !((Boolean)value).booleanValue();
     } else if (value instanceof Character) {
       return ((Character)value).equals('\u0000');
     } else {
-      throw new IllegalStateException("Unknown primitive type " + value.getClass().getName());
+      return ((Number)value).doubleValue() == 0;
     }
   }
 
