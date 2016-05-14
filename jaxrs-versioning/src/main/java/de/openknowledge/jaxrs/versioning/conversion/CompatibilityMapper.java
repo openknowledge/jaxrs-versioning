@@ -34,10 +34,10 @@ public class CompatibilityMapper {
   }
 
   public void map(Object object) {
-    map(object, new VersionContext(object));
+    map(object, new DefaultVersionContext(object));
   }
 
-  public void map(Object object, VersionContext context) {
+  public void map(Object object, DefaultVersionContext context) {
     VersionType<?> versionType = versionTypeFactory.get(object.getClass());
 
     for (VersionProperty versionProperty : versionType.getProperties()) {
@@ -77,7 +77,7 @@ public class CompatibilityMapper {
   }
 
   private void updateDependentValues(VersionPropertyValue propertyValue) {
-    VersionContext dependentContext = propertyValue.getContext();
+    DefaultVersionContext dependentContext = propertyValue.getContext();
     VersionType<?> dependentType = versionTypeFactory.get(dependentContext.getParent().getClass());
 
     MovedFrom movedFrom = propertyValue.getAnnotation(MovedFrom.class);
@@ -115,7 +115,7 @@ public class CompatibilityMapper {
     setValue(propertyValue, provider, defaultValue, dependentContext);
   }
 
-  private void updateDependentValues(VersionType<?> dependentType, VersionPropertyValue propertyValue, MovedFrom movedFrom, VersionContext dependentContext) {
+  private void updateDependentValues(VersionType<?> dependentType, VersionPropertyValue propertyValue, MovedFrom movedFrom, DefaultVersionContext dependentContext) {
     VersionPropertyValue dependentValue = getPropertyValue(dependentType, movedFrom.value(), dependentContext);
     if (dependentValue.isDefault()) {
       updateDependentValues(dependentValue);
@@ -125,7 +125,7 @@ public class CompatibilityMapper {
     }
   }
 
-  private void setValue(VersionPropertyValue value, Class<? extends Provider> provider, String defaultValue, VersionContext context) {
+  private void setValue(VersionPropertyValue value, Class<? extends Provider> provider, String defaultValue, DefaultVersionContext context) {
     if (!provider.equals(Provider.class)) {
       Provider<?> providerInstance = (Provider<?>)versionTypeFactory.get(provider).newInstance();
       try {
@@ -143,7 +143,7 @@ public class CompatibilityMapper {
     }
   }
 
-  private void setDependentValues(VersionType<?> versionType, MovedFrom movedFrom, Added added, VersionProperty property, Object value, VersionContext context) {
+  private void setDependentValues(VersionType<?> versionType, MovedFrom movedFrom, Added added, VersionProperty property, Object value, DefaultVersionContext context) {
     if (movedFrom != null) {
       setDependentValues(versionType, movedFrom.value(), value, context);
     }
@@ -157,7 +157,7 @@ public class CompatibilityMapper {
     }
   }
 
-  private void setDependentValues(VersionType<?> versionType, String path, Object value, VersionContext context) {
+  private void setDependentValues(VersionType<?> versionType, String path, Object value, DefaultVersionContext context) {
     VersionPropertyValue propertyValue = getPropertyValue(versionType, path, context);
     propertyValue.set(value);
     MovedFrom movedFrom = propertyValue.getAnnotation(MovedFrom.class);
@@ -166,7 +166,7 @@ public class CompatibilityMapper {
     setDependentValues(propertyParentType, movedFrom, added, propertyValue.getProperty(), value, propertyValue.getContext());
   }
 
-  private void setRemovedValues(VersionType<?> versionType, String dependsOn, VersionContext context) {
+  private void setRemovedValues(VersionType<?> versionType, String dependsOn, DefaultVersionContext context) {
     VersionPropertyValue propertyValue = getPropertyValue(versionType, dependsOn, context);
     if (propertyValue.isDefault()) {
       Removed removed = propertyValue.getAnnotation(Removed.class);
@@ -188,11 +188,11 @@ public class CompatibilityMapper {
     }
   }
 
-  private VersionPropertyValue getPropertyValue(VersionType<?> versionType, String path, VersionContext context) {
+  private VersionPropertyValue getPropertyValue(VersionType<?> versionType, String path, DefaultVersionContext context) {
     return getPropertyValue(versionType, path.split("/"), 0, context);
   }
 
-  private VersionPropertyValue getPropertyValue(VersionType<?> versionType, String[] pathElements, int index, VersionContext context) {
+  private VersionPropertyValue getPropertyValue(VersionType<?> versionType, String[] pathElements, int index, DefaultVersionContext context) {
     String propertyName = pathElements[index];
     if (propertyName.equals("..")) {
       context = context.getParentContext();
@@ -231,7 +231,7 @@ public class CompatibilityMapper {
     return propertyName.endsWith("]");
   }
 
-  private VersionPropertyValue createPropertyValue(VersionProperty property, int collectionIndex, VersionContext context) {
+  private VersionPropertyValue createPropertyValue(VersionProperty property, int collectionIndex, DefaultVersionContext context) {
     if (isCollection(collectionIndex)) {
       return new CollectionElementValue(property, collectionIndex, context);
     } else {

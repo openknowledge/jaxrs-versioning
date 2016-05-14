@@ -28,7 +28,7 @@ public class CollectionElementValue extends VersionPropertyValue {
 
   private int index;
   
-  public CollectionElementValue(VersionProperty property, int index, VersionContext context) {
+  public CollectionElementValue(VersionProperty property, int index, DefaultVersionContext context) {
     super(property, context);
     this.index = index;
   }

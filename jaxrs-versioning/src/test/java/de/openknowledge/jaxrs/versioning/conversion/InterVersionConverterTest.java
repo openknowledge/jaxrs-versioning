@@ -19,8 +19,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Date;
+import java.util.TimeZone;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import de.openknowledge.jaxrs.versioning.model.AddressV1;
@@ -42,6 +45,16 @@ public class InterVersionConverterTest {
   private VersionTypeFactory factory = new VersionTypeFactory();
   private CompatibilityMapper mapper = new CompatibilityMapper(factory);
   private InterVersionConverter converter = new InterVersionConverter(factory, mapper);
+
+  @Before
+  public void setTimeZone() {
+    TimeZone.setDefault(TimeZone.getTimeZone("GTM"));
+  }
+
+  @After
+  public void resetTimeZone() {
+    TimeZone.setDefault(null);
+  }
 
   @Test
   public void convertAddressFromV2ToV1() {
@@ -115,9 +128,11 @@ public class InterVersionConverterTest {
   public void convertCustomerFromV1ToV2() {
     CustomerV2 customer = converter.convertToHigherVersion(CustomerV2.class, new CustomerV1() {{
       name = "customer";
+      dateOfBirth = "01/01/1970";
       addresses = Arrays.asList(new AddressV1(new StreetV1("Samplestreet", "1"), "12345 Samplecity"));
     }}, "v1");
     assertThat(customer.getName(), is("customer"));
+    assertThat(customer.getDateOfBirth(), is(new Date(0)));
     assertThat(customer.getAddresses().size(), is(1));
     assertThat(customer.getAddresses(), hasItem(v2()));
   }
@@ -125,8 +140,9 @@ public class InterVersionConverterTest {
   @Test
   public void convertCustomerFromV2ToV1() {
     CustomerV1 customer = (CustomerV1)converter.convertToLowerVersion("v1",
-        new CustomerV2("customer", new AddressV2("Samplestreet 1", " ", new CityV2("12345", "Samplecity"))));
+        new CustomerV2("customer", new Date(0), new AddressV2("Samplestreet 1", " ", new CityV2("12345", "Samplecity"))));
     assertThat(customer.getName(), is("customer"));
+    assertThat(customer.getDateOfBirth(), is("Thu Jan 01 00:00:00 GMT 1970"));
     assertThat(customer.getAddresses().size(), is(1));
     assertThat(customer.getAddresses(), hasItem(v10()));
   }

@@ -13,6 +13,7 @@
 package de.openknowledge.jaxrs.versioning.model;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,18 +26,24 @@ import de.openknowledge.jaxrs.versioning.SupportedVersion;
 public class CustomerV2 {
 
   private String name;
+  private Date dateOfBirth;
   private Set<AddressV2> addresses;
 
   protected CustomerV2() {
   }
   
-  public CustomerV2(String name, AddressV2... addresses) {
+  public CustomerV2(String name, Date dateOfBirth, AddressV2... addresses) {
     this.name = name;
+    this.dateOfBirth = dateOfBirth;
     this.addresses = new HashSet<AddressV2>(Arrays.asList(addresses));
   }
 
   public String getName() {
     return name;
+  }
+  
+  public Date getDateOfBirth() {
+    return dateOfBirth;
   }
 
   public Set<AddressV2> getAddresses() {

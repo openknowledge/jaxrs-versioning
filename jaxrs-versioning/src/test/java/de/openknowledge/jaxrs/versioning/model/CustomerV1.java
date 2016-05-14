@@ -23,10 +23,15 @@ import de.openknowledge.jaxrs.versioning.SupportedVersion;
 public class CustomerV1 {
 
   protected String name;
+  protected String dateOfBirth;
   protected List<AddressV1> addresses;
 
   public String getName() {
     return name;
+  }
+  
+  public String getDateOfBirth() {
+    return dateOfBirth;
   }
 
   public List<AddressV1> getAddresses() {

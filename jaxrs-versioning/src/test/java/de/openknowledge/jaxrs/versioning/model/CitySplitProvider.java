@@ -13,7 +13,7 @@
 package de.openknowledge.jaxrs.versioning.model;
 
 import de.openknowledge.jaxrs.versioning.Provider;
-import de.openknowledge.jaxrs.versioning.conversion.VersionContext;
+import de.openknowledge.jaxrs.versioning.VersionContext;
 
 /**
  * @author Philipp Geers - open knowledge GmbH

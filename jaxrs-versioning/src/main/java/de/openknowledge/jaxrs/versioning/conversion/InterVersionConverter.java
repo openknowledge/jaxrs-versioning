@@ -52,7 +52,7 @@ public class InterVersionConverter {
     if (supportedVersion.previous() == Object.class) {
       throw new IllegalVersionException(targetVersion);
     }
-    return convertToLowerVersion(targetVersion, map(source, supportedVersion.previous(), new VersionContext()));
+    return convertToLowerVersion(targetVersion, map(source, supportedVersion.previous(), new DefaultVersionContext()));
   }
 
   public <T> T convertToHigherVersion(Class<T> targetType, Object source, String sourceVersion) {
@@ -72,10 +72,10 @@ public class InterVersionConverter {
       throw new IllegalVersionException(sourceVersion);
     }
     Object previousVersion = convertToHigherVersion(supportedVersion.previous(), source, sourceVersion);
-    return map(previousVersion, targetType, new VersionContext());
+    return map(previousVersion, targetType, new DefaultVersionContext());
   }
 
-  private <T> T map(Object previous, Class<T> targetType, VersionContext context) {
+  private <T> T map(Object previous, Class<T> targetType, DefaultVersionContext context) {
     VersionType<T> targetVersionType = factory.get(targetType);
     T target = null;
     VersionType<?> previousVersionType = factory.get(previous.getClass());

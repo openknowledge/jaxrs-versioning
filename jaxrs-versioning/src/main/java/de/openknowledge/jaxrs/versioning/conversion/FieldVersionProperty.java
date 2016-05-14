@@ -17,8 +17,8 @@ import static org.apache.commons.lang3.Validate.notNull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 
 import org.apache.commons.lang3.ClassUtils;
 

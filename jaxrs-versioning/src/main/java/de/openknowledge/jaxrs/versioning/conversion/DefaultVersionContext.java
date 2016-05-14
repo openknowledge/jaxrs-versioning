@@ -15,29 +15,34 @@ package de.openknowledge.jaxrs.versioning.conversion;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.openknowledge.jaxrs.versioning.VersionContext;
+
 /**
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
-public class VersionContext {
+public class DefaultVersionContext implements VersionContext {
 
   private String propertyName;
   private List<Object> parents;
   
-  public VersionContext() {
+  public DefaultVersionContext() {
     parents = new ArrayList<>();
   }
 
-  public VersionContext(Object parent) {
+  public DefaultVersionContext(Object parent) {
     this();
     parents.add(parent);
   }
 
-  private VersionContext(List<Object> stack) {
+  private DefaultVersionContext(List<Object> stack) {
     this.parents = stack;
   }
 
   public Object getParent() {
+    if (parents.isEmpty()) {
+      return null;
+    }
     return parents.get(parents.size() - 1);
   }
 
@@ -59,13 +64,19 @@ public class VersionContext {
     propertyName = name;
   }
 
-  VersionContext getParentContext() {
-    return new VersionContext(parents.subList(0, parents.size() - 1));
+  DefaultVersionContext getParentContext() {
+    if (parents.isEmpty()) {
+      return null;
+    }
+    return new DefaultVersionContext(parents.subList(0, parents.size() - 1));
   }
 
-  VersionContext getChildContext(Object base) {
+  DefaultVersionContext getChildContext(Object base) {
     List<Object> newParents = new ArrayList<Object>(parents);
     newParents.add(base);
-    return new VersionContext(newParents);
+    return new DefaultVersionContext(newParents);
   }
 }
+
+
+

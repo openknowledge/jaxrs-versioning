@@ -21,9 +21,9 @@ import java.lang.annotation.Annotation;
 public class VersionPropertyValue {
 
   private VersionProperty property;
-  private VersionContext context;
+  private DefaultVersionContext context;
 
-  public VersionPropertyValue(VersionProperty property, VersionContext context) {
+  public VersionPropertyValue(VersionProperty property, DefaultVersionContext context) {
     this.property = property;
     this.context = context;
   }
@@ -48,7 +48,7 @@ public class VersionPropertyValue {
     return property.getAnnotation(annotationType);
   }
 
-  public VersionContext getContext() {
+  public DefaultVersionContext getContext() {
     return context;
   }
 }
