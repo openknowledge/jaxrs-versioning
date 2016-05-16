@@ -242,6 +242,13 @@ public class AddressResourceTest {
     assertThat(location.getString("cityName"), is("Samplecity"));
   }
 
+  @Test
+  public void postWithNoTypeInformation(@ArquillianResource URL url) throws IOException {
+    JSONArray result = new JSONArray(IOUtils.toString(post(new URL(url, "v1/addresses/noTypeInformation"), "string_array.json")));
+    assertThat(result.length(), is(1));
+    assertThat(result.get(0).toString(), is("entry"));
+  }
+
   private InputStream post(URL url, String resource) throws IOException {
     return send(url, "POST", resource);
   }
@@ -252,9 +259,9 @@ public class AddressResourceTest {
 
   private InputStream send(URL url, String method, String resource) throws IOException {
     HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+    connection.setDoOutput(true);
     connection.setRequestMethod(method);
     connection.setRequestProperty("Content-Type", "application/json");
-    connection.setDoOutput(true);
     PrintWriter writer = new PrintWriter(connection.getOutputStream());
     for (String line: IOUtils.readLines(AddressV1.class.getResourceAsStream(resource))) {
       writer.write(line);

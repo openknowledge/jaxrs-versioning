@@ -105,4 +105,12 @@ public class AddressResource {
     }
     return address;
   }
+
+  @POST
+  @Path("/noTypeInformation")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public List<?> getWithNoVersionInformation(List parameter) {
+    return parameter;
+  }
 }

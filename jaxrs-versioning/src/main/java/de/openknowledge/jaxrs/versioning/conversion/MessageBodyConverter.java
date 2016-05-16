@@ -39,7 +39,7 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
 
   private VersionTypeFactory factory = new VersionTypeFactory();
   private CompatibilityMapper mapper = new CompatibilityMapper(factory);
-  private InterVersionConverter converter = new InterVersionConverter(factory, mapper);
+  private InterversionConverter converter = new InterversionConverter(factory, mapper);
 
   @Context
   private UriInfo uriInfo;
@@ -108,9 +108,6 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
   private boolean isVersioningSupported(InterceptorContext context) {
     Class<?> simpleType = context.getType();
     if (Collection.class.isAssignableFrom(context.getType())) {
-      if (!(context.getGenericType() instanceof ParameterizedType)) {
-        return false;
-      }
       simpleType = getTypeArgument(context.getGenericType());
       if (simpleType == null) {
         return false;
@@ -146,7 +143,7 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
     } else if (type instanceof ParameterizedType) {
       return toClass(((ParameterizedType)type).getRawType());
     } else {
-      throw new IllegalArgumentException("Unsupported generic type " + type);
+      return null;
     }
   }
 
@@ -156,6 +153,6 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
     }
     ParameterizedType parameterizedType = (ParameterizedType)type;
     Type actualTypeArgument = parameterizedType.getActualTypeArguments()[0];
-    return actualTypeArgument instanceof Class? toClass(actualTypeArgument): null; 
+    return toClass(actualTypeArgument);
   }
 }
