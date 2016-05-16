@@ -26,28 +26,24 @@ import de.openknowledge.jaxrs.versioning.SupportedVersion;
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
-public class InterVersionConverter {
+public class InterversionConverter {
 
   private VersionTypeFactory factory;
   private CompatibilityMapper mapper;
 
-  public InterVersionConverter(VersionTypeFactory factory, CompatibilityMapper mapper) {
+  public InterversionConverter(VersionTypeFactory factory, CompatibilityMapper mapper) {
     this.factory = factory;
     this.mapper = mapper;
   }
 
-  public Object convertToLowerVersion(String targetVersion, Object source) {
+  public <T> T convertToLowerVersion(String targetVersion, Object source) {
     Class<?> sourceType = source.getClass();
-    if (sourceType == Object.class) {
-      throw new IllegalVersionException(targetVersion);
-    }
-    VersionType<?> versionType = factory.get(sourceType);
-    SupportedVersion supportedVersion = versionType.getAnnotation(SupportedVersion.class);
+    SupportedVersion supportedVersion = sourceType.getAnnotation(SupportedVersion.class);
     if (supportedVersion == null) {
       throw new IllegalVersionException(targetVersion);
     }
     if (targetVersion.equals(supportedVersion.version())) {
-      return source;
+      return (T)source;
     }
     if (supportedVersion.previous() == Object.class) {
       throw new IllegalVersionException(targetVersion);
@@ -56,11 +52,7 @@ public class InterVersionConverter {
   }
 
   public <T> T convertToHigherVersion(Class<T> targetType, Object source, String sourceVersion) {
-    if (targetType == Object.class) {
-      throw new IllegalVersionException(sourceVersion);
-    }
-    VersionType<?> versionType = factory.get(targetType);
-    SupportedVersion supportedVersion = versionType.getAnnotation(SupportedVersion.class);
+    SupportedVersion supportedVersion = targetType.getAnnotation(SupportedVersion.class);
     if (supportedVersion == null) {
       throw new IllegalVersionException(sourceVersion);
     }

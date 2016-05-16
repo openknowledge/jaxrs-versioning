@@ -16,6 +16,7 @@ import static de.openknowledge.jaxrs.versioning.model.AddressMatchers.v10;
 import static de.openknowledge.jaxrs.versioning.model.AddressMatchers.v2;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
@@ -40,11 +41,11 @@ import de.openknowledge.jaxrs.versioning.model.StreetV1;
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
-public class InterVersionConverterTest {
+public class InterversionConverterTest {
 
   private VersionTypeFactory factory = new VersionTypeFactory();
   private CompatibilityMapper mapper = new CompatibilityMapper(factory);
-  private InterVersionConverter converter = new InterVersionConverter(factory, mapper);
+  private InterversionConverter converter = new InterversionConverter(factory, mapper);
 
   @Before
   public void setTimeZone() {
@@ -58,7 +59,7 @@ public class InterVersionConverterTest {
 
   @Test
   public void convertAddressFromV2ToV1() {
-    AddressV1 address = (AddressV1)converter.convertToLowerVersion("v1", new AddressV2("Samplestreet 1", " ", new CityV2("12345", "Samplecity")));
+    AddressV1 address = converter.convertToLowerVersion("v1", new AddressV2("Samplestreet 1", " ", new CityV2("12345", "Samplecity")));
     assertThat(address.getAddressLine1(), is("Samplestreet 1"));
     assertThat(address.getAddressLine2(), is(" "));
     assertThat(address.getZipCode(), is("12345"));
@@ -79,7 +80,7 @@ public class InterVersionConverterTest {
 
   @Test
   public void convertAddressFromV3ToV2() {
-    AddressV2 address = (AddressV2)converter.convertToLowerVersion("v2",
+    AddressV2 address = converter.convertToLowerVersion("v2",
         new AddressV3(new CityV3("12345", "Samplecity"), "Samplestreet 1", " "));
     assertThat(address.getAddressLines().size(), is(2));
     assertThat(address.getAddressLine1(), is("Samplestreet 1"));
@@ -104,7 +105,7 @@ public class InterVersionConverterTest {
 
   @Test
   public void convertAddressFromV3ToV1() {
-    AddressV1 address = (AddressV1)converter.convertToLowerVersion("v1", new AddressV3("Samplestreet 1", " ", new CityV3("12345", "Samplecity")));
+    AddressV1 address = converter.convertToLowerVersion("v1", new AddressV3("Samplestreet 1", " ", new CityV3("12345", "Samplecity")));
     assertThat(address.getStreet().getName(), is("Samplestreet"));
     assertThat(address.getStreet().getNumber(), is("1"));
     assertThat(address.getAddressLine1(), is("Samplestreet 1"));
@@ -139,11 +140,43 @@ public class InterVersionConverterTest {
 
   @Test
   public void convertCustomerFromV2ToV1() {
-    CustomerV1 customer = (CustomerV1)converter.convertToLowerVersion("v1",
+    CustomerV1 customer = converter.convertToLowerVersion("v1",
         new CustomerV2("customer", new Date(0), new AddressV2("Samplestreet 1", " ", new CityV2("12345", "Samplecity"))));
     assertThat(customer.getName(), is("customer"));
     assertThat(customer.getDateOfBirth(), is("Thu Jan 01 00:00:00 GMT 1970"));
     assertThat(customer.getAddresses().size(), is(1));
     assertThat(customer.getAddresses(), hasItem(v10()));
+  }
+
+  @Test
+  public void convertWithNullList() {
+    CustomerV2 customer = converter.convertToHigherVersion(CustomerV2.class, new CustomerV1() {{
+      name = "customer";
+      dateOfBirth = "01/01/1970";
+      addresses = null;
+    }}, "v1");
+    assertThat(customer.getName(), is("customer"));
+    assertThat(customer.getDateOfBirth(), is(new Date(0)));
+    assertThat(customer.getAddresses(), is(nullValue()));
+  }
+
+  @Test(expected = IllegalVersionException.class)
+  public void convertToLowerVersionThrowsExceptionForUnversionedObject() {
+    converter.convertToLowerVersion("v1", new LocationV1("12345", "Samplecity"));
+  }
+
+  @Test(expected = IllegalVersionException.class)
+  public void convertToLowerVersionThrowsExceptionForUnsupportedVersion() {
+    converter.convertToLowerVersion("v0", new AddressV1("Samplestreet 1", " ", new LocationV1("12345", "Samplecity")));
+  }
+
+  @Test(expected = IllegalVersionException.class)
+  public void convertToHigherVersionThrowsExceptionForUnversionedObject() {
+    converter.convertToHigherVersion(LocationV1.class, new LocationV1("12345", "Samplecity"), "v1");
+  }
+
+  @Test(expected = IllegalVersionException.class)
+  public void convertToHigherVersionThrowsExceptionForUnsupportedVersion() {
+    converter.convertToHigherVersion(AddressV1.class, new AddressV1("Samplestreet 1", " ", new LocationV1("12345", "Samplecity")), "v0");
   }
 }
