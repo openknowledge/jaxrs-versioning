@@ -20,13 +20,11 @@ import java.lang.annotation.Target;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
- * @author Philipp Geers - open knowledge GmbH
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.FIELD})
-public @interface Removed {
-  Class<? extends Provider> provider() default Provider.class;
-  String defaultValue() default "";
-  String[] isDependencyOf() default {};
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface VersionHeader {
+
+  String value();
 }

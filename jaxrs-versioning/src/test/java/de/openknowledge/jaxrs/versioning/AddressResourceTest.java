@@ -27,7 +27,6 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -42,12 +41,12 @@ import org.junit.runner.RunWith;
 
 import de.openknowledge.jaxrs.versioning.conversion.MessageBodyConverter;
 import de.openknowledge.jaxrs.versioning.model.AddressV1;
+import de.openknowledge.jaxrs.versioning.resources.AddressResource;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
  * @author Philipp Geers - open knowledge GmbH
  */
-@WarpTest
 @RunAsClient
 @RunWith(Arquillian.class)
 public class AddressResourceTest {

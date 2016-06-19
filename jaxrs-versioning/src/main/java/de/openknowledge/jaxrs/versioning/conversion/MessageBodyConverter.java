@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.InterceptorContext;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.ReaderInterceptor;
@@ -40,16 +38,13 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
   private VersionTypeFactory factory = new VersionTypeFactory();
   private CompatibilityMapper mapper = new CompatibilityMapper(factory);
   private InterversionConverter converter = new InterversionConverter(factory, mapper);
-
-  @Context
-  private UriInfo uriInfo;
   
   @Override
   public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException, WebApplicationException {
     if (!isVersioningSupported(context)) {
       return context.proceed();
     }
-    String sourceVersion = getVersion();
+    String sourceVersion = Version.get(context);
     Type targetType = context.getGenericType();
     Type sourceType = getVersionType(targetType, sourceVersion);
     context.setType(toClass(sourceType));
@@ -82,7 +77,7 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
       context.proceed();
       return;
     }
-    String targetVersion = getVersion();
+    String targetVersion = Version.get(context);
     Object source = context.getEntity();
     if (source instanceof Collection) {
       context.setEntity(convertCollectionToLowerVersion(targetVersion, (Collection<?>)source));
@@ -114,10 +109,6 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
       }
     }
     return simpleType.isAnnotationPresent(SupportedVersion.class);
-  }
-
-  private String getVersion() {
-    return uriInfo.getPathParameters().get("version").iterator().next();
   }
 
   private Type getVersionType(Type type, String version) {
