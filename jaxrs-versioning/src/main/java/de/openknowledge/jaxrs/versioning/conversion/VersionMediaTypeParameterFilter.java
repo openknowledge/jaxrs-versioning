@@ -13,26 +13,33 @@
 package de.openknowledge.jaxrs.versioning.conversion;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.MediaType;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
  */
-public class VersionHeaderFilter implements ContainerRequestFilter, ContainerResponseFilter {
+public class VersionMediaTypeParameterFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
-  private String headerName;
+  private String parameterName;
 
-  VersionHeaderFilter(String headerName) {
-    this.headerName = headerName;
+  VersionMediaTypeParameterFilter(String parameterName) {
+    this.parameterName = parameterName;
   }
 
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
-    String version = requestContext.getHeaderString(headerName);
+    MediaType mediaType = requestContext.getMediaType();
+    if (mediaType == null) {
+      return;
+    }
+    String version = mediaType.getParameters().get(parameterName);
     if (version != null) {
       Version.set(requestContext, version);
     }
@@ -42,7 +49,13 @@ public class VersionHeaderFilter implements ContainerRequestFilter, ContainerRes
   public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
     String version = Version.get(requestContext);
     if (version != null) {
-      responseContext.getHeaders().putSingle(headerName, Version.get(requestContext));
+      MediaType mediaType = responseContext.getMediaType();
+      if (mediaType != null) {
+        Map<String, String> parameters = new HashMap<String, String>(mediaType.getParameters());
+        parameters.put(parameterName, version);
+        mediaType = new MediaType(mediaType.getType(), mediaType.getSubtype(), parameters);
+        responseContext.getHeaders().putSingle("Content-Type", mediaType.toString());
+      }
     }
   }
 }
