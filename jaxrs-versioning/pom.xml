@@ -293,5 +293,42 @@
         </dependency>
       </dependencies>
     </profile>
+    <profile>
+      <id>payara</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <exclude>de.openknowledge.jaxrs.versioning.AddressResourceTest</exclude>
+                <exclude>de.openknowledge.jaxrs.versioning.VersionedMediaTypeFeatureTest</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-glassfish-embedded-3.1</artifactId>
+          <version>1.0.0.CR4</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>fish.payara.extras</groupId>
+          <artifactId>payara-embedded-all</artifactId>
+          <version>4.1.1.163.0.1</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>javax</groupId>
+          <artifactId>javaee-api</artifactId>
+          <version>7.0</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
 </project>

@@ -60,6 +60,7 @@ public class VersionMediaTypeParameterFeatureTest {
         .addAsLibraries(pom.resolve("org.json:json").withTransitivity().asFile())
         .setWebXML(new StringAsset(Descriptors.create(WebAppDescriptor.class)
           .addDefaultNamespaces()
+          .version("3.0")
           .exportAsString()));
   }
 
