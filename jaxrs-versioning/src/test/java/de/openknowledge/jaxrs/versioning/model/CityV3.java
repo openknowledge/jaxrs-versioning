@@ -34,7 +34,15 @@ public class CityV3 {
     return zipCode;
   }
 
+  public void setZipCode(String zipCode) {
+    this.zipCode = zipCode;
+  }
+  
   public String getCityName() {
     return cityName;
+  }
+  
+  public void setCityName(String cityName) {
+    this.cityName = cityName;
   }
 }

@@ -41,12 +41,24 @@ public class CustomerV2 {
   public String getName() {
     return name;
   }
-  
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public Date getDateOfBirth() {
     return dateOfBirth;
   }
 
+  public void setDateOfBirth(Date dateOfBirth) {
+    this.dateOfBirth = dateOfBirth;
+  }
+
   public Set<AddressV2> getAddresses() {
     return addresses;
+  }
+
+  public void setAddresses(Set<AddressV2> addresses) {
+    this.addresses = addresses;
   }
 }

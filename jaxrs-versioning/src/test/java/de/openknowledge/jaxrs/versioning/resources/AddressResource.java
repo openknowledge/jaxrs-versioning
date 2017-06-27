@@ -110,7 +110,7 @@ public class AddressResource {
   @Path("/noTypeInformation")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public List<?> getWithNoVersionInformation(List parameter) {
+  public List<?> getWithNoVersionInformation(List<String> parameter) {
     return parameter;
   }
 }

@@ -67,6 +67,34 @@ public class AddressV1 {
     this.location = location;
   }
 
+  public void setStreet(StreetV1 street) {
+    this.street = street;
+  }
+
+  public void setCity(String city) {
+    this.city = city;
+  }
+
+  public void setZipCode(String zipCode) {
+    this.zipCode = zipCode;
+  }
+
+  public void setCityName(String cityName) {
+    this.cityName = cityName;
+  }
+
+  public void setAddressLine1(String addressLine1) {
+    this.addressLine1 = addressLine1;
+  }
+
+  public void setAddressLine2(String addressLine2) {
+    this.addressLine2 = addressLine2;
+  }
+
+  public void setLocation(LocationV1 location) {
+    this.location = location;
+  }
+
   public StreetV1 getStreet() {
     return street;
   }

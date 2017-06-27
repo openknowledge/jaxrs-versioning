@@ -59,19 +59,39 @@ public class AddressV2 {
     return addressLine1;
   }
 
+  public void setAddressLine1(String addressLine1) {
+    this.addressLine1 = addressLine1;
+  }
+
   public String getAddressLine2() {
     return addressLine2;
   }
-  
+
+  public void setAddressLine2(String addressLine2) {
+    this.addressLine2 = addressLine2;
+  }
+
   public List<String> getAddressLines() {
     return addressLines;
+  }
+
+  public void setAddressLines(List<String> addressLines) {
+    this.addressLines = addressLines;
   }
 
   public CityV2 getLocation() {
     return location;
   }
 
+  public void setLocation(CityV2 location) {
+    this.location = location;
+  }
+
   public CityV2 getCity() {
     return city;
+  }
+
+  public void setCity(CityV2 city) {
+    this.city = city;
   }
 }

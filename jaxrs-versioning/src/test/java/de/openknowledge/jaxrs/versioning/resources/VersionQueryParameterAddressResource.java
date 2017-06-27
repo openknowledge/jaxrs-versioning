@@ -18,7 +18,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import de.openknowledge.jaxrs.versioning.VersionMediaTypeParameter;
 import de.openknowledge.jaxrs.versioning.VersionQueryParameter;
 import de.openknowledge.jaxrs.versioning.model.AddressV3;
 

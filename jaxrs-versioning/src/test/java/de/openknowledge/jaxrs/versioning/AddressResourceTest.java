@@ -243,7 +243,8 @@ public class AddressResourceTest {
 
   @Test
   public void postWithNoTypeInformation(@ArquillianResource URL url) throws IOException {
-    JSONArray result = new JSONArray(IOUtils.toString(post(new URL(url, "v1/addresses/noTypeInformation"), "string_array.json")));
+    String string = IOUtils.toString(post(new URL(url, "v1/addresses/noTypeInformation"), "string_array.json"));
+    JSONArray result = new JSONArray(string);
     assertThat(result.length(), is(1));
     assertThat(result.get(0).toString(), is("entry"));
   }

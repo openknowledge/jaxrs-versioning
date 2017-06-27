@@ -29,12 +29,24 @@ public class CustomerV1 {
   public String getName() {
     return name;
   }
-  
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public String getDateOfBirth() {
     return dateOfBirth;
   }
 
+  public void setDateOfBirth(String dateOfBirth) {
+    this.dateOfBirth = dateOfBirth;
+  }
+
   public List<AddressV1> getAddresses() {
     return addresses;
+  }
+
+  public void setAddresses(List<AddressV1> addresses) {
+    this.addresses = addresses;
   }
 }

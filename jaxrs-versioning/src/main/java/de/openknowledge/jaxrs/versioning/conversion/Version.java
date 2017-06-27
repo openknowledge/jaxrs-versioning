@@ -22,15 +22,20 @@ public class Version {
 
   private static final String VERSION_PROPERTY_NAME = Version.class.getName().toLowerCase();
 
+  private static final ThreadLocal<String> VERSION = new ThreadLocal<String>();
+
   public static String get(InterceptorContext context) {
-    return (String)context.getProperty(VERSION_PROPERTY_NAME);
+    return VERSION.get();
+//    return (String)context.getProperty(VERSION_PROPERTY_NAME);
   }
 
   public static String get(ContainerRequestContext context) {
-    return (String)context.getProperty(VERSION_PROPERTY_NAME);
+    return VERSION.get();
+//    return (String)context.getProperty(VERSION_PROPERTY_NAME);
   }
   
   public static void set(ContainerRequestContext context, String version) {
-    context.setProperty(VERSION_PROPERTY_NAME, version);
+    VERSION.set(version);
+//    context.setProperty(VERSION_PROPERTY_NAME, version);
   }
 }
