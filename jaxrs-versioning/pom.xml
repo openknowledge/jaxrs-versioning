@@ -254,7 +254,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <excludes>
-                <exclude>de.openknowledge.jaxrs.versioning.AddressResourceTest</exclude>
+                <exclude>de.openknowledge.jaxrs.versioning.AddressResourceWithNoTypeInformationTest</exclude>
               </excludes>
             </configuration>
           </plugin>
@@ -302,7 +302,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <excludes>
-                <exclude>de.openknowledge.jaxrs.versioning.AddressResourceTest</exclude>
+                <exclude>de.openknowledge.jaxrs.versioning.AddressResourceWithNoTypeInformationTest</exclude>
                 <exclude>de.openknowledge.jaxrs.versioning.VersionedMediaTypeFeatureTest</exclude>
               </excludes>
             </configuration>
