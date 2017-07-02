@@ -38,4 +38,9 @@ public class Version {
     VERSION.set(version);
 //    context.setProperty(VERSION_PROPERTY_NAME, version);
   }
+
+  public static void unset(InterceptorContext context) {
+    VERSION.remove();
+//    context.removeProperty(VERSION_PROPERTY_NAME);
+  }
 }

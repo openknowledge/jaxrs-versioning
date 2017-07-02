@@ -89,6 +89,7 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
     context.setType(toClass(targetType));
     context.setGenericType(targetType);
     context.proceed();
+    Version.unset(context);
   }
 
   private Collection<?> convertCollectionToLowerVersion(String targetVersion, Collection<?> source) {
