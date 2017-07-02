@@ -34,7 +34,7 @@ public class VersionedMediaTypeFeature implements DynamicFeature {
     }
     
     if (versionedContentType != null) {
-      VersionedMediaTypeFilter.register(MediaType.valueOf(versionedContentType.value()), MediaType.valueOf(versionedContentType.mapsTo()));
+      VersionedMediaTypeFilter.register(versionedContentType.value(), MediaType.valueOf(versionedContentType.mapsTo()));
     }
   }
 }

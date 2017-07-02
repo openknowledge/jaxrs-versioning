@@ -303,7 +303,6 @@
             <configuration>
               <excludes>
                 <exclude>de.openknowledge.jaxrs.versioning.AddressResourceWithNoTypeInformationTest</exclude>
-                <exclude>de.openknowledge.jaxrs.versioning.VersionedMediaTypeFeatureTest</exclude>
               </excludes>
             </configuration>
           </plugin>

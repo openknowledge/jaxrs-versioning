@@ -30,7 +30,7 @@ import javax.ws.rs.ext.Provider;
 public class VersionedMediaTypeFilter implements ContainerRequestFilter {
 
   private static final String VERSION_PATTERN = "{version}";
-  private static ConcurrentMap<MediaType, MediaType> customMediaTypes = new ConcurrentHashMap<MediaType, MediaType>();
+  private static ConcurrentMap<VersionedMediaType, MediaType> customMediaTypes = new ConcurrentHashMap<VersionedMediaType, MediaType>();
 
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -38,33 +38,85 @@ public class VersionedMediaTypeFilter implements ContainerRequestFilter {
     if (mediaType == null) {
       return;
     }
-    MediaType customMediaType = getMatchedMediaType(mediaType);
+    VersionedMediaType customMediaType = getMatchedMediaType(mediaType);
     if (customMediaType != null) {
-      Version.set(requestContext, getVersion(mediaType, customMediaType));
+      Version.set(requestContext, customMediaType.extractVersionFrom(mediaType));
       requestContext.getHeaders().putSingle("Content-Type", customMediaTypes.get(customMediaType).toString());
     }
   }
 
-  static void register(MediaType customMediaType, MediaType mappedMediaType) {
-    customMediaTypes.put(customMediaType, mappedMediaType);
+  static void register(String customMediaType, MediaType mappedMediaType) {
+    customMediaTypes.put(new VersionedMediaType(customMediaType), mappedMediaType);
   }
 
-  private MediaType getMatchedMediaType(MediaType mediaType) {
-    for (MediaType customMediaType: customMediaTypes.keySet()) {
-      if (!customMediaType.getType().equals(mediaType.getType())) {
-        continue;
-      }
-      int index = customMediaType.getSubtype().indexOf(VERSION_PATTERN);
-      if (mediaType.getSubtype().startsWith(customMediaType.getSubtype().substring(0, index))
-          && mediaType.getSubtype().endsWith(customMediaType.getSubtype().substring(index + VERSION_PATTERN.length()))) {
+  private VersionedMediaType getMatchedMediaType(MediaType mediaType) {
+    for (VersionedMediaType customMediaType: customMediaTypes.keySet()) {
+      if (customMediaType.matches(mediaType)) {
         return customMediaType;
       }
     }
     return null;
   }
 
-  private String getVersion(MediaType mediaType, MediaType customMediaType) {
-    int index = customMediaType.getSubtype().indexOf(VERSION_PATTERN);
-    return mediaType.getSubtype().substring(index, index + mediaType.getSubtype().length() - customMediaType.getSubtype().length() + VERSION_PATTERN.length());
+  private static class VersionedMediaType {
+
+    private final String mediaType;
+    private transient String type;
+    private transient String subtype;
+    private transient String subtypePrefix;
+    private transient String subtypeSuffix;
+
+    public VersionedMediaType(String type) {
+      if (type == null) {
+        throw new IllegalArgumentException("media type is required");
+      }
+      this.mediaType = type;
+    }
+
+    public boolean matches(MediaType mediaType) {
+      if (!isInitialized()) {
+        initializeTypes();
+      }
+      if (!type.equals(mediaType.getType())) {
+        return false;
+      }
+      return mediaType.getSubtype().startsWith(subtypePrefix) && mediaType.getSubtype().endsWith(subtypeSuffix);
+    }
+
+    public String extractVersionFrom(MediaType mediaType) {
+      if (!isInitialized()) {
+        initializeTypes();
+      }
+      int index = subtype.indexOf(VERSION_PATTERN);
+      return mediaType.getSubtype().substring(index, index + mediaType.getSubtype().length() - subtype.length() + VERSION_PATTERN.length());
+    }
+
+    @Override
+    public int hashCode() {
+      return mediaType.hashCode();
+    }
+
+    public boolean equals(Object object) {
+      if (this == object) {
+        return true;
+      }
+      if (!(object instanceof VersionedMediaType)) {
+        return false;
+      }
+      return mediaType.equals(((VersionedMediaType)object).mediaType);
+    }
+
+    private boolean isInitialized() {
+      return type != null;
+    }
+
+    private void initializeTypes() {
+      int slashIndex = mediaType.indexOf('/');
+      type = mediaType.substring(0, slashIndex);
+      subtype = mediaType.substring(slashIndex + 1);
+      int versionPatternIndex = subtype.indexOf(VERSION_PATTERN);
+      subtypePrefix = subtype.substring(0, versionPatternIndex);
+      subtypeSuffix = subtype.substring(versionPatternIndex + VERSION_PATTERN.length());
+    }
   }
 }
