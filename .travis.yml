@@ -1,0 +1,5 @@
+language: java
+jdk:
+  - oraclejdk9
+# - openjdk9 # TODO openjdk9 is not available on Ubuntu 15.04, we have to pull 16.04 before build
+before_script: cd jaxrs-versioning
