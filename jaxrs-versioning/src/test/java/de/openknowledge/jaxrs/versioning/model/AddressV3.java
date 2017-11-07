@@ -39,6 +39,8 @@ public class AddressV3 {
 
   protected CityV3 city;
 
+  private AddressTypeV3 type;
+
   protected AddressV3() {
   }
 
@@ -83,5 +85,13 @@ public class AddressV3 {
 
   public void setCity(CityV3 city) {
     this.city = city;
+  }
+
+  public AddressTypeV3 getType() {
+    return type;
+  }
+
+  public void setType(AddressTypeV3 type) {
+    this.type = type;
   }
 }

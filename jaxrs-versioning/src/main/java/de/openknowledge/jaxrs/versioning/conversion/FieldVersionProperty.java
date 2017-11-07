@@ -115,12 +115,15 @@ public class FieldVersionProperty implements VersionProperty {
   }
 
   private boolean isSimple(Class<?> type) {
-    return type == String.class || type == Date.class || ClassUtils.isPrimitiveOrWrapper(type);
+    return type == String.class || type == Date.class || Enum.class.isAssignableFrom(type) || ClassUtils.isPrimitiveOrWrapper(type);
   }
 
   private Object convert(Object value) {
     if (value == null || !isSimple() || type.isAssignableFrom(value.getClass())) {
       return value;
+    }
+    if (Enum.class.isAssignableFrom(type)) {
+      return Enum.valueOf((Class<? extends Enum>)type, value.toString());
     }
     Class<?> targetType = type.isPrimitive() ? ClassUtils.primitiveToWrapper(type) : type;
     try {

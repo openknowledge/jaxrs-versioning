@@ -40,6 +40,9 @@ public class AddressV2 {
 
   @MovedFrom("location")
   protected CityV2 city;
+  
+  @Added(defaultValue = "PRIVATE")
+  private AddressTypeV2 type;
 
   protected AddressV2() {
   }
@@ -93,5 +96,13 @@ public class AddressV2 {
 
   public void setCity(CityV2 city) {
     this.city = city;
+  }
+
+  public AddressTypeV2 getType() {
+    return type;
+  }
+
+  public void setType(AddressTypeV2 type) {
+    this.type = type;
   }
 }
