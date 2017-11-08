@@ -1,5 +1,11 @@
 language: java
 jdk:
-  - oraclejdk7
   - openjdk7
+  - oraclejdk8
+  - openjdk8
+  - oraclejdk9
+  #- openjdk9 not available for Trusty
 before_script: cd jaxrs-versioning
+cache:
+    directories:
+        - $HOME/.m2
