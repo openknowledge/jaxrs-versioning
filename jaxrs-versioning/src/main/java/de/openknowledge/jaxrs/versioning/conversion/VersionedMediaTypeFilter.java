@@ -13,12 +13,15 @@
 package de.openknowledge.jaxrs.versioning.conversion;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
 
@@ -35,11 +38,25 @@ public class VersionedMediaTypeFilter implements ContainerRequestFilter {
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
     MediaType mediaType = requestContext.getMediaType();
-    if (mediaType == null) {
-      return;
+    VersionedMediaType customMediaType = null;
+    if (mediaType != null) {
+      customMediaType = getMatchedMediaType(mediaType);
+    } else {
+      for (MediaType type : requestContext.getAcceptableMediaTypes()) {
+        customMediaType = getMatchedMediaType(type);
+        if (customMediaType != null) {
+          mediaType = type;
+          List<String> headers = new LinkedList<>();
+          // TomEE seems to use the first entry of accept headers to determine the content-type
+          // we want to preserve the original headers to be able to use them in other context
+          headers.add(customMediaTypes.get(customMediaType).toString());
+          headers.addAll(requestContext.getHeaders().get(HttpHeaders.ACCEPT));
+          requestContext.getHeaders().put(HttpHeaders.ACCEPT, headers);
+          break;
+        }
+      }
     }
-    VersionedMediaType customMediaType = getMatchedMediaType(mediaType);
-    if (customMediaType != null) {
+    if (mediaType != null && customMediaType != null) {
       Version.set(requestContext, customMediaType.extractVersionFrom(mediaType));
       requestContext.getHeaders().putSingle("Content-Type", customMediaTypes.get(customMediaType).toString());
     }
