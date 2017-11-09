@@ -13,19 +13,30 @@
 package de.openknowledge.jaxrs.versioning.resources;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import de.openknowledge.jaxrs.versioning.VersionedMediaType;
 import de.openknowledge.jaxrs.versioning.model.AddressV3;
+import de.openknowledge.jaxrs.versioning.model.CityV3;
 
 /**
  * @author Arne Limburg - open knowledge GmbH
  */
 @Path("/addresses")
 public class VersionedMediaTypeAddressResource {
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/{id}")
+  @VersionedMediaType(value = "application/vnd+de.openknowledge.jaxrs.versioning+json+{version}", mapsTo = "application/json")
+  public AddressV3 getAddress(@PathParam("id") String id) {
+    return new AddressV3("Samplestreet 1", " ", new CityV3("12345", "Samplecity"));
+  }
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)

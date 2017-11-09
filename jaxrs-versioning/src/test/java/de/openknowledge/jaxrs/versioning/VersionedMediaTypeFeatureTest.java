@@ -33,6 +33,7 @@ import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.PomEquippedResolveStage;
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -62,6 +63,20 @@ public class VersionedMediaTypeFeatureTest {
           .addDefaultNamespaces()
           .version("3.0")
           .exportAsString()));
+  }
+
+  @Ignore
+  @Test
+  public void getAddressV20(@ArquillianResource URL url) throws IOException {
+    HttpURLConnection connection = (HttpURLConnection)new URL(url, "addresses/42").openConnection();
+    connection.setRequestProperty("Accept", "application/vnd+de.openknowledge.jaxrs.versioning+json+v2");
+    
+    JSONObject address = new JSONObject(IOUtils.toString(connection.getInputStream()));
+    JSONObject location = address.getJSONObject("location");
+    assertThat(address.getString("addressLine1"), is("Samplestreet 1"));
+    assertThat(address.getString("addressLine2"), is(" "));
+    assertThat(location.getString("zipCode"), is("12345"));
+    assertThat(location.getString("cityName"), is("Samplecity"));
   }
 
   @Test
