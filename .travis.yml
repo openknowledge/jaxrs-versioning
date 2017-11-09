@@ -3,7 +3,7 @@ jdk:
   - openjdk7
   - oraclejdk8
   - openjdk8
-  - oraclejdk9
+  #- oraclejdk9 jacoco does not work
   #- openjdk9 not available for Trusty
 before_script: cd jaxrs-versioning
 cache:
