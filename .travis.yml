@@ -5,11 +5,13 @@ jdk:
   - openjdk8
   #- oraclejdk9 jacoco does not work
   #- openjdk9 not available for Trusty
-before_script: cd jaxrs-versioning
-script:
-  - mvn test -B
-  - mvn test -B -Ppayara
-  - mvn test -B -Ptomee
+env:
+  - CONTAINER=wildfly
+  - CONTAINER=payara
+  - CONTAINER=tomee
+before_install: cd jaxrs-versioning
+install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -P $CONTAINER
+script: mvn test -B -P $CONTAINER
 cache:
     directories:
         - $HOME/.m2
