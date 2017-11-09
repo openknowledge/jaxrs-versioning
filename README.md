@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/openknowledge/jaxrs-versioning.svg?branch=master)](https://travis-ci.org/openknowledge/jaxrs-versioning)
+
 Why interface versioning?
 =========================
 When you have a server with an interface and clients that use that interface
