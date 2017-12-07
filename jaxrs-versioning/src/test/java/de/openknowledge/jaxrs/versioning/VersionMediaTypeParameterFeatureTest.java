@@ -65,7 +65,6 @@ public class VersionMediaTypeParameterFeatureTest {
           .exportAsString()));
   }
 
-  @Ignore
   @Test
   public void getAddressV20(@ArquillianResource URL url) throws IOException {
     HttpURLConnection connection = (HttpURLConnection)new URL(url, "addresses/42").openConnection();

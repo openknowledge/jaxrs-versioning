@@ -36,10 +36,17 @@ public class VersionMediaTypeParameterFilter implements ContainerRequestFilter, 
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
     MediaType mediaType = requestContext.getMediaType();
-    if (mediaType == null) {
-      return;
+    String version = null;
+    if (mediaType != null) {
+      version = extractVersion(mediaType);
+    } else {
+      for (MediaType type : requestContext.getAcceptableMediaTypes()) {
+        version = extractVersion(type);
+        if (version != null) {
+          break;
+        }
+      }
     }
-    String version = mediaType.getParameters().get(parameterName);
     if (version != null) {
       Version.set(requestContext, version);
     }
@@ -57,5 +64,9 @@ public class VersionMediaTypeParameterFilter implements ContainerRequestFilter, 
         responseContext.getHeaders().putSingle("Content-Type", mediaType.toString());
       }
     }
+  }
+
+  private String extractVersion(MediaType mediaType) {
+    return mediaType.getParameters().get(parameterName);
   }
 }
