@@ -27,5 +27,8 @@ jobs:
     - jdk: oraclejdk8
       env:
         - CONTAINER=payara
+      script: mvn test -B -P $CONTAINER
+    - jdk: oraclejdk8
+      env:
         - CONTAINER=tomee
       script: mvn test -B -P $CONTAINER
