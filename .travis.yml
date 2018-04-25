@@ -11,7 +11,10 @@ env:
   - CONTAINER=tomee
 before_install: cd jaxrs-versioning
 install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -P $CONTAINER
-script: mvn test -B -P $CONTAINER
+script: mvn test sonar:sonar -B -P $CONTAINER
 cache:
     directories:
         - $HOME/.m2
+addons:
+  sonarcloud:
+    organization: "ok"
