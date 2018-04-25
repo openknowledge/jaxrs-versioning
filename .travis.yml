@@ -1,7 +1,7 @@
 language: java
 jdk:
   - openjdk7
-  - oraclejdk8
+  #- oraclejdk8 moved to jobs section, see below
   - openjdk8
   #- oraclejdk9 jacoco does not work
   #- openjdk9 not available for Trusty
@@ -20,6 +20,15 @@ addons:
     organization: "ok"
 jobs:
   include:
-    - stage: sonarcloud
-      jdk: oraclejdk8
-      script: mvn sonar:sonar
+    - jdk: oraclejdk8
+      env:
+        - CONTAINER=wildfly
+      script: mvn test -B -P $CONTAINER sonar:sonar
+    - jdk: oraclejdk8
+      env:
+        - CONTAINER=payara
+      script: mvn test -B -P $CONTAINER
+    - jdk: oraclejdk8
+      env:
+        - CONTAINER=tomee
+      script: mvn test -B -P $CONTAINER
