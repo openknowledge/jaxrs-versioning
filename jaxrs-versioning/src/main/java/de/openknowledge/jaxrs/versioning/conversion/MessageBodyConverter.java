@@ -118,7 +118,7 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
       Type sourceType = getVersionType(getTypeArgument(type), version);
       return new DefaultParameterizedType(((ParameterizedType)type).getOwnerType(), rawType, sourceType);
     }
-    SupportedVersion supportedVersion = toClass(type).getAnnotation(SupportedVersion.class);
+    SupportedVersion supportedVersion = extractSupportedVersion(type);
     if (supportedVersion == null) {
       throw new IllegalVersionException(version);
     }
@@ -127,6 +127,15 @@ public class MessageBodyConverter implements ReaderInterceptor, WriterIntercepto
     } else {
       return getVersionType(supportedVersion.previous(), version);
     }
+  }
+
+  private SupportedVersion extractSupportedVersion(Type type) {
+    Class<?> clz = toClass(type);
+    if (clz != null) {
+      return clz.getAnnotation(SupportedVersion.class);
+    }
+
+    return null;
   }
 
   private Class<?> toClass(Type type) {
