@@ -132,7 +132,7 @@ public class InterversionConverter {
   }
 
   private boolean match(VersionType<?> versionType, VersionType<?> previousVersionType, Set<Pair<VersionType<?>, VersionType<?>>> visited) {
-    ImmutablePair<?, ?> pair = ImmutablePair.of(versionType, previousVersionType);
+    Pair<?, ?> pair = ImmutablePair.of(versionType, previousVersionType);
     if (visited.contains(pair)) {
       return true;
     }
